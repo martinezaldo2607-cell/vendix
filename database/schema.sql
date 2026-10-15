@@ -1,4 +1,9 @@
 CREATE TABLE IF NOT EXISTS categorias (
+  id      INTEGER PRIMARY KEY AUTOINCREMENT,
+  nombre  TEXT NOT NULL UNIQUE
+);
+
+CREATE TABLE IF NOT EXISTS impuestos (
   id          INTEGER PRIMARY KEY AUTOINCREMENT,
   nombre      TEXT NOT NULL UNIQUE,
   iva_tasa    REAL NOT NULL DEFAULT 0,
@@ -9,14 +14,20 @@ CREATE TABLE IF NOT EXISTS categorias (
 
 CREATE TABLE IF NOT EXISTS productos (
   id            INTEGER PRIMARY KEY AUTOINCREMENT,
-  codigo        TEXT NOT NULL UNIQUE,
+  codigo        TEXT UNIQUE,
   nombre        TEXT NOT NULL,
   categoria_id  INTEGER NOT NULL REFERENCES categorias(id),
+  impuesto_id   INTEGER NOT NULL REFERENCES impuestos(id),
   precio_base   REAL NOT NULL CHECK (precio_base >= 0),
   litros        REAL NOT NULL DEFAULT 0,
   stock         INTEGER NOT NULL DEFAULT 0 CHECK (stock >= 0),
-  stock_minimo  INTEGER NOT NULL DEFAULT 5,
+  stock_minimo  INTEGER NOT NULL DEFAULT 10,
   activo        INTEGER NOT NULL DEFAULT 1
+);
+
+CREATE TABLE IF NOT EXISTS ajustes (
+  clave  TEXT PRIMARY KEY,
+  valor  TEXT NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS usuarios (

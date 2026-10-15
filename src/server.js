@@ -17,6 +17,7 @@ app.get('/api/salud', (req, res) => {
 
 app.use('/api/productos', require('./routes/productos'));
 app.use('/api/categorias', require('./routes/categorias'));
+app.use('/api/impuestos', require('./routes/impuestos'));
 
 app.listen(PORT, () => {
   console.log(`Vendix corriendo en http://localhost:${PORT}`);
