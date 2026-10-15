@@ -14,7 +14,7 @@
     <form id="formulario" class="tarjeta">
       <h3>Datos del producto</h3>
       <label>Nombre
-        <input type="text" name="nombre" placeholder="Nombre del producto" required>
+        <input type="text" name="nombre" placeholder="Nombre del producto" required maxlength="100">
       </label>
       <label>Categoría
         <select name="categoria_id" required></select>
@@ -27,7 +27,7 @@
       </label>
       <div class="fila-3">
         <label>Precio base (MXN)
-          <input type="number" name="precio_base" min="0" step="0.01" placeholder="0.00" required>
+          <input type="number" name="precio_base" min="0.01" step="0.01" placeholder="0.00" required>
         </label>
         <label>Existencias
           <input type="number" name="stock" min="0" step="1" value="0">

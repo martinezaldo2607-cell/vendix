@@ -26,7 +26,7 @@ function validar(d) {
   if (!d.nombre) e.push('El nombre es obligatorio');
   if (!Number.isInteger(d.categoria_id) || d.categoria_id <= 0) e.push('Elige una categoría');
   if (!Number.isInteger(d.impuesto_id) || d.impuesto_id <= 0) e.push('Elige un tipo de impuesto');
-  if (Number.isNaN(d.precio_base) || d.precio_base < 0) e.push('El precio debe ser un número mayor o igual a 0');
+  if (Number.isNaN(d.precio_base) || d.precio_base <= 0) e.push('El precio debe ser un número mayor a 0');
   if (Number.isNaN(d.litros) || d.litros < 0) e.push('Los litros deben ser un número mayor o igual a 0');
   if (!Number.isInteger(d.stock) || d.stock < 0) e.push('Las existencias deben ser un entero mayor o igual a 0');
   if (!Number.isInteger(d.stock_minimo) || d.stock_minimo < 0) e.push('El stock mínimo debe ser un entero mayor o igual a 0');

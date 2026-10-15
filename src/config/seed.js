@@ -37,7 +37,9 @@ const insImpuesto = db.prepare(
   'INSERT OR IGNORE INTO impuestos (nombre, iva_tasa, ieps_tipo, ieps_valor) VALUES (?, ?, ?, ?)'
 );
 const insCategoria = db.prepare('INSERT OR IGNORE INTO categorias (nombre) VALUES (?)');
-const insAjuste = db.prepare('INSERT OR IGNORE INTO ajustes (clave, valor) VALUES (?, ?)');
+const insConfig = db.prepare(
+  "INSERT OR IGNORE INTO configuracion_negocio (id, nombre_tienda, moneda) VALUES (1, ?, 'MXN')"
+);
 const idCategoria = db.prepare('SELECT id FROM categorias WHERE nombre = ?');
 const idImpuesto = db.prepare('SELECT id FROM impuestos WHERE nombre = ?');
 const existe = db.prepare('SELECT 1 FROM productos WHERE nombre = ?');
@@ -45,8 +47,7 @@ const existe = db.prepare('SELECT 1 FROM productos WHERE nombre = ?');
 db.transaction(() => {
   impuestos.forEach((i) => insImpuesto.run(...i));
   categorias.forEach((c) => insCategoria.run(c));
-  insAjuste.run('nombre_tienda', 'Abarrotes San Miguel');
-  insAjuste.run('moneda', 'MXN');
+  insConfig.run('Abarrotes San Miguel');
 
   productos.forEach(([nombre, cat, imp, precio, litros, stock, minimo]) => {
     if (existe.get(nombre)) return;

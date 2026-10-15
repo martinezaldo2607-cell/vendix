@@ -12,7 +12,7 @@ const SELECT_BASE = `
 
 function registrarMovimiento(productoId, tipo, cantidad, motivo) {
   db.prepare(
-    'INSERT INTO movimientos_inventario (producto_id, tipo, cantidad, motivo) VALUES (?, ?, ?, ?)'
+    'INSERT INTO movimientos_inventario (producto_id, tipo, cantidad, observacion) VALUES (?, ?, ?, ?)'
   ).run(productoId, tipo, cantidad, motivo);
 }
 
