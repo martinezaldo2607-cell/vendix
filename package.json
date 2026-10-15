@@ -4,12 +4,24 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node src/server.js",
+    "dev": "nodemon src/server.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
     "express": "^5.3.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/martinezaldo2607-cell/vendix.git"
+  },
+  "bugs": {
+    "url": "https://github.com/martinezaldo2607-cell/vendix/issues"
+  },
+  "homepage": "https://github.com/martinezaldo2607-cell/vendix#readme",
+  "devDependencies": {
+    "nodemon": "^3.1.14"
   }
 }
