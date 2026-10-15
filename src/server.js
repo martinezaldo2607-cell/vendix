@@ -15,6 +15,10 @@ app.get('/api/salud', (req, res) => {
   res.json({ ok: true, mensaje: 'Vendix funcionando' });
 });
 
+app.use('/api/productos', require('./routes/productos'));
+app.use('/api/categorias', require('./routes/categorias'));
+app.use('/api/impuestos', require('./routes/impuestos'));
+
 app.listen(PORT, () => {
   console.log(`Vendix corriendo en http://localhost:${PORT}`);
 });

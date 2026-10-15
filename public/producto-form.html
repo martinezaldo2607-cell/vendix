@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Producto | Vendix</title>
+  <link rel="stylesheet" href="css/estilos.css">
+</head>
+<body data-pagina="productos">
+  <aside id="barra-lateral" class="barra-lateral"></aside>
+  <main class="contenido">
+    <h2 class="titulo" id="titulo">Agregar producto</h2>
+
+    <form id="formulario" class="tarjeta">
+      <h3>Datos del producto</h3>
+      <label>Nombre
+        <input type="text" name="nombre" placeholder="Nombre del producto" required>
+      </label>
+      <label>Categoría
+        <select name="categoria_id" required></select>
+      </label>
+      <label>Tipo de impuesto
+        <select name="impuesto_id" required></select>
+      </label>
+      <label id="bloque-litros" hidden>Litros del producto (para el IEPS por litro)
+        <input type="number" name="litros" min="0" step="0.001" value="0">
+      </label>
+      <div class="fila-3">
+        <label>Precio base (MXN)
+          <input type="number" name="precio_base" min="0" step="0.01" placeholder="0.00" required>
+        </label>
+        <label>Existencias
+          <input type="number" name="stock" min="0" step="1" value="0">
+        </label>
+        <label>Stock mínimo (alerta)
+          <input type="number" name="stock_minimo" min="0" step="1" value="10">
+        </label>
+      </div>
+
+      <p id="error-form" class="error" hidden></p>
+      <div class="botones">
+        <button type="submit" class="btn btn-primario">Guardar</button>
+        <a href="productos.html" class="btn btn-secundario">Cancelar</a>
+      </div>
+    </form>
+  </main>
+
+  <script src="js/comun.js"></script>
+  <script src="js/producto-form.js"></script>
+</body>
+</html>
