@@ -68,4 +68,10 @@ function desactivar(id) {
   db.prepare('UPDATE productos SET activo = 0 WHERE id = ?').run(id);
 }
 
-module.exports = { listar, obtener, crear, actualizar, desactivar };
+// Suma existencias y deja registrado el movimiento, todo en una sola transacción
+const registrarEntrada = db.transaction((id, cantidad, observacion, usuarioId) => {
+  db.prepare('UPDATE productos SET stock = stock + ? WHERE id = ?').run(cantidad, id);
+  registrarMovimiento(id, usuarioId, 'entrada', cantidad, observacion || 'Entrada de mercancía');
+});
+
+module.exports = { listar, obtener, crear, actualizar, desactivar, registrarEntrada };

@@ -137,3 +137,11 @@ dialog h3 { font-family: 'Playfair Display', serif; margin-top: 0; }
   color: var(--claro); font: inherit; font-size: 0.85rem;
   text-decoration: underline; cursor: pointer;
 }
+
+.estado { display: inline-block; padding: 0.15rem 0.75rem; border-radius: 999px; font-size: 0.8rem; }
+.estado-ok { background: #e3f1ea; color: #1b5e3a; }
+.estado-bajo { background: var(--alerta); color: var(--alerta-texto); }
+.estado-agotado { background: #fdecea; color: var(--peligro); }
+
+dialog label { display: block; margin-bottom: 1rem; font-size: 0.9rem; font-weight: 500; }
+dialog label input, dialog label select { margin-top: 0.3rem; font-weight: 400; }
