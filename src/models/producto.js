@@ -10,10 +10,10 @@ const SELECT_BASE = `
   JOIN impuestos i ON i.id = p.impuesto_id
 `;
 
-function registrarMovimiento(productoId, tipo, cantidad, motivo) {
+function registrarMovimiento(productoId, usuarioId, tipo, cantidad, observacion) {
   db.prepare(
-    'INSERT INTO movimientos_inventario (producto_id, tipo, cantidad, observacion) VALUES (?, ?, ?, ?)'
-  ).run(productoId, tipo, cantidad, motivo);
+    'INSERT INTO movimientos_inventario (producto_id, usuario_id, tipo, cantidad, observacion) VALUES (?, ?, ?, ?, ?)'
+  ).run(productoId, usuarioId, tipo, cantidad, observacion);
 }
 
 function listar({ buscar = '', stockBajo = false, incluirInactivos = false } = {}) {
@@ -34,7 +34,7 @@ function obtener(id) {
 }
 
 // Crea el producto, le genera el código y registra su existencia inicial
-const crear = db.transaction((d) => {
+const crear = db.transaction((d, usuarioId) => {
   const id = db.prepare(`
     INSERT INTO productos
       (nombre, categoria_id, impuesto_id, precio_base, litros, stock, stock_minimo)
@@ -43,12 +43,12 @@ const crear = db.transaction((d) => {
     .lastInsertRowid;
 
   db.prepare("UPDATE productos SET codigo = 'P' || printf('%04d', id) WHERE id = ?").run(id);
-  if (d.stock > 0) registrarMovimiento(id, 'entrada', d.stock, 'Existencia inicial');
+  if (d.stock > 0) registrarMovimiento(id, usuarioId, 'entrada', d.stock, 'Existencia inicial');
   return id;
 });
 
 // Si cambian las existencias, deja registrado un movimiento de ajuste
-const actualizar = db.transaction((id, d) => {
+const actualizar = db.transaction((id, d, usuarioId) => {
   const actual = db.prepare('SELECT stock FROM productos WHERE id = ?').get(id).stock;
 
   db.prepare(`
@@ -60,7 +60,7 @@ const actualizar = db.transaction((id, d) => {
 
   const diferencia = d.stock - actual;
   if (diferencia !== 0) {
-    registrarMovimiento(id, diferencia > 0 ? 'entrada' : 'salida', Math.abs(diferencia), 'Ajuste manual');
+    registrarMovimiento(id, usuarioId, diferencia > 0 ? 'entrada' : 'salida', Math.abs(diferencia), 'Ajuste manual');
   }
 });
 

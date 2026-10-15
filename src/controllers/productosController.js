@@ -68,7 +68,7 @@ function crear(req, res) {
   const errores = validar(datos);
   if (errores.length) return res.status(400).json({ errores });
   try {
-    const id = Producto.crear(datos);
+    const id = Producto.crear(datos, req.session.usuario.id);
     res.status(201).json(conImpuestos(Producto.obtener(id)));
   } catch (err) {
     responderError(err, res);
@@ -83,7 +83,7 @@ function actualizar(req, res) {
   const errores = validar(datos);
   if (errores.length) return res.status(400).json({ errores });
   try {
-    Producto.actualizar(id, datos);
+    Producto.actualizar(id, datos, req.session.usuario.id);
     res.json(conImpuestos(Producto.obtener(id)));
   } catch (err) {
     responderError(err, res);

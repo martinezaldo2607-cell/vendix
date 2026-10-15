@@ -1,16 +1,17 @@
+// [id, texto, página, roles que lo ven]
 const MENU = [
-  ['inicio', 'Inicio', 'index.html'],
-  ['ventas', 'Ventas', 'ventas.html'],
-  ['productos', 'Productos', 'productos.html'],
-  ['inventario', 'Inventario', 'inventario.html'],
-  ['historial', 'Historial', 'historial.html'],
-  ['reportes', 'Reportes', 'reportes.html'],
-  ['usuarios', 'Usuarios', 'usuarios.html'],
-  ['ajustes', 'Ajustes', 'ajustes.html'],
+  ['inicio', 'Inicio', 'index.html', ['ADMINISTRADOR', 'CAJERO']],
+  ['ventas', 'Ventas', 'ventas.html', ['ADMINISTRADOR', 'CAJERO']],
+  ['productos', 'Productos', 'productos.html', ['ADMINISTRADOR']],
+  ['inventario', 'Inventario', 'inventario.html', ['ADMINISTRADOR', 'CAJERO']],
+  ['historial', 'Historial', 'historial.html', ['ADMINISTRADOR', 'CAJERO']],
+  ['reportes', 'Reportes', 'reportes.html', ['ADMINISTRADOR']],
+  ['usuarios', 'Usuarios', 'usuarios.html', ['ADMINISTRADOR']],
+  ['ajustes', 'Ajustes', 'ajustes.html', ['ADMINISTRADOR']],
 ];
 
-// Sesión simulada: se reemplaza cuando hagamos el login
-const USUARIO = { nombre: 'Ricardo Gómez', rol: 'Administrador' };
+const ROLES = { ADMINISTRADOR: 'Administrador', CAJERO: 'Cajero' };
+let USUARIO = null;
 
 const moneda = new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' });
 
@@ -22,6 +23,10 @@ function esc(texto) {
 
 async function api(url, opciones = {}) {
   const res = await fetch(url, { headers: { 'Content-Type': 'application/json' }, ...opciones });
+  if (res.status === 401) {
+    location.href = 'login.html';
+    throw new Error('Inicia sesión para continuar');
+  }
   const datos = await res.json();
   if (!res.ok) throw new Error(datos.errores ? datos.errores.join('. ') : datos.error);
   return datos;
@@ -37,13 +42,30 @@ function mostrarMensaje(texto, tipo) {
   temporizadorMensaje = setTimeout(() => { caja.hidden = true; }, 4000);
 }
 
-function montarLayout() {
+async function montarLayout() {
+  USUARIO = await api('/api/auth/yo');
+
+  // Páginas restringidas: <body data-roles="ADMINISTRADOR">
+  const permitidos = document.body.dataset.roles;
+  if (permitidos && !permitidos.split(',').includes(USUARIO.rol)) {
+    location.href = 'index.html';
+    return;
+  }
+
   const activa = document.body.dataset.pagina;
   document.getElementById('barra-lateral').innerHTML = `
     <div class="logo">Vendix<span>.</span></div>
-    <nav>${MENU.map(([id, texto, url]) =>
+    <nav>${MENU.filter((m) => m[3].includes(USUARIO.rol)).map(([id, texto, url]) =>
       `<a href="${url}" class="${id === activa ? 'activo' : ''}">${texto}</a>`).join('')}</nav>
-    <div class="usuario">${esc(USUARIO.nombre)}<br>${esc(USUARIO.rol)}</div>`;
+    <div class="usuario">
+      ${esc(USUARIO.nombre)}<br>${ROLES[USUARIO.rol]}<br>
+      <button id="cerrar-sesion" class="cerrar-sesion">Cerrar sesión</button>
+    </div>`;
+
+  document.getElementById('cerrar-sesion').addEventListener('click', async () => {
+    await fetch('/api/auth/logout', { method: 'POST' });
+    location.href = 'login.html';
+  });
 }
 
-montarLayout();
+const sesionLista = montarLayout().catch(() => {});

@@ -1,5 +1,6 @@
 const db = require('./db');
 const Producto = require('../models/producto');
+const bcrypt = require('bcryptjs');
 
 // [nombre, iva_tasa, ieps_tipo, ieps_valor]
 const impuestos = [
@@ -33,6 +34,15 @@ const productos = [
   ['Croquetas perro 1 kg', 'Mascotas', 'IVA 16%', 70, 0, 12, 4],
 ];
 
+// [nombre, usuario, contraseña inicial, rol]
+const usuarios = [
+  ['Ricardo Gómez Nicolás', 'ricardo', 'admin123', 'ADMINISTRADOR'],
+  ['José Gómez', 'jose', 'cajero123', 'CAJERO'],
+];
+const insUsuario = db.prepare(
+  'INSERT OR IGNORE INTO usuarios (nombre, usuario, password_hash, rol) VALUES (?, ?, ?, ?)'
+);
+
 const insImpuesto = db.prepare(
   'INSERT OR IGNORE INTO impuestos (nombre, iva_tasa, ieps_tipo, ieps_valor) VALUES (?, ?, ?, ?)'
 );
@@ -49,6 +59,10 @@ db.transaction(() => {
   categorias.forEach((c) => insCategoria.run(c));
   insConfig.run('Abarrotes San Miguel');
 
+  usuarios.forEach(([nombre, usuario, clave, rol]) =>
+    insUsuario.run(nombre, usuario, bcrypt.hashSync(clave, 10), rol));
+  const adminId = db.prepare("SELECT id FROM usuarios WHERE usuario = 'ricardo'").get().id;
+
   productos.forEach(([nombre, cat, imp, precio, litros, stock, minimo]) => {
     if (existe.get(nombre)) return;
     Producto.crear({
@@ -59,7 +73,7 @@ db.transaction(() => {
       litros,
       stock,
       stock_minimo: minimo,
-    });
+    }, adminId);
   });
 })();
 

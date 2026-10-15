@@ -70,7 +70,7 @@ CREATE TABLE IF NOT EXISTS detalle_venta (
 CREATE TABLE IF NOT EXISTS movimientos_inventario (
   id           INTEGER PRIMARY KEY AUTOINCREMENT,
   producto_id  INTEGER NOT NULL REFERENCES productos(id),
-  usuario_id   INTEGER REFERENCES usuarios(id),
+  usuario_id   INTEGER NOT NULL REFERENCES usuarios(id),
   tipo         TEXT NOT NULL CHECK (tipo IN ('entrada', 'salida')),
   cantidad     INTEGER NOT NULL CHECK (cantidad > 0),
   fecha_hora   TEXT NOT NULL DEFAULT (datetime('now', 'localtime')),
