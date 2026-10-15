@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Entrar | Vendix</title>
+  <link rel="stylesheet" href="css/estilos.css">
+</head>
+<body class="pagina-login">
+  <main class="login">
+    <h1 class="logo-login">Vendix<span>.</span></h1>
+    <p class="subtitulo">Control de inventario y ventas</p>
+
+    <form id="formulario" class="tarjeta">
+      <label>Usuario
+        <input type="text" name="usuario" placeholder="Tu usuario" autocomplete="username" required autofocus>
+      </label>
+      <label>Contraseña
+        <input type="password" name="password" placeholder="Tu contraseña" autocomplete="current-password" required>
+      </label>
+      <p id="error-form" class="error" hidden></p>
+      <button type="submit" class="btn btn-primario btn-block">Entrar</button>
+      <p class="nota">El acceso depende de tu rol: Administrador o Cajero</p>
+    </form>
+  </main>
+  <script src="js/login.js"></script>
+</body>
+</html>

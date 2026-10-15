@@ -123,3 +123,17 @@ dialog h3 { font-family: 'Playfair Display', serif; margin-top: 0; }
   .fila-3 { grid-template-columns: 1fr; }
 }
 [hidden] { display: none !important; }
+
+.pagina-login { justify-content: center; align-items: center; }
+.login { width: min(420px, 92vw); text-align: center; }
+.logo-login { font-family: 'Playfair Display', serif; font-size: 3rem; margin: 0; color: var(--petroleo); }
+.logo-login span { color: var(--medio); }
+.subtitulo { color: #5a7384; margin: 0.2rem 0 1.5rem; }
+.login .tarjeta { text-align: left; margin: 0; }
+.btn-block { width: 100%; }
+.nota { text-align: center; font-size: 0.85rem; color: #5a7384; margin: 1rem 0 0; }
+.cerrar-sesion {
+  margin-top: 0.4rem; padding: 0; background: none; border: none;
+  color: var(--claro); font: inherit; font-size: 0.85rem;
+  text-decoration: underline; cursor: pointer;
+}
