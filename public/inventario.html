@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Inventario | Vendix</title>
+  <link rel="stylesheet" href="css/estilos.css">
+</head>
+<body data-pagina="inventario">
+  <aside id="barra-lateral" class="barra-lateral"></aside>
+  <main class="contenido">
+    <h2 class="titulo">Inventario</h2>
+    <div class="centrado">
+      <button id="btn-entrada" class="btn btn-primario" hidden>+ Registrar entrada</button>
+      <p id="nota-lectura" class="nota" hidden>Solo consulta: las existencias las modifica el administrador.</p>
+    </div>
+
+    <div class="filtros">
+      <input type="search" id="buscar" placeholder="Buscar por nombre o código...">
+      <select id="filtro-estado">
+        <option value="">Todos los estados</option>
+        <option value="STOCK_BAJO">Stock bajo</option>
+        <option value="AGOTADO">Agotados</option>
+      </select>
+    </div>
+
+    <div id="mensaje" class="mensaje" hidden></div>
+
+    <div class="tabla-contenedor">
+      <table>
+        <thead>
+          <tr><th>Producto</th><th>Existencias</th><th>Mínimo</th><th>Estado</th></tr>
+        </thead>
+        <tbody id="tabla-inventario"></tbody>
+      </table>
+    </div>
+  </main>
+
+  <dialog id="dialogo-entrada">
+    <form id="formulario">
+      <h3>Registrar entrada de mercancía</h3>
+      <label>Producto
+        <select name="producto_id" id="select-producto" required></select>
+      </label>
+      <label>Cantidad que ingresa
+        <input type="number" name="cantidad" min="1" max="100000" step="1" required>
+      </label>
+      <label>Observación (opcional)
+        <input type="text" name="observacion" maxlength="200" placeholder="Ej. Pedido del proveedor del lunes">
+      </label>
+      <p id="error-form" class="error" hidden></p>
+      <div class="botones">
+        <button type="submit" class="btn btn-primario">Guardar</button>
+        <button type="button" id="btn-cancelar" class="btn btn-secundario">Cancelar</button>
+      </div>
+    </form>
+  </dialog>
+
+  <script src="js/comun.js"></script>
+  <script src="js/inventario.js"></script>
+</body>
+</html>

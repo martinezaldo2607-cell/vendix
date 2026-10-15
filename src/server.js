@@ -28,6 +28,7 @@ app.get('/api/salud', (req, res) => {
 
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/productos', require('./routes/productos'));
+app.use('/api/inventario', require('./routes/inventario'));
 app.use('/api/categorias', requiereSesion, require('./routes/categorias'));
 app.use('/api/impuestos', requiereSesion, require('./routes/impuestos'));
 
