@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Productos | Vendix</title>
+  <link rel="stylesheet" href="css/estilos.css">
+</head>
+<body>
+  <header class="barra">
+    <h1>Vendix</h1>
+    <nav>
+      <a href="index.html">Inicio</a>
+      <a href="productos.html" class="activo">Productos</a>
+    </nav>
+  </header>
+
+  <main class="contenedor">
+    <div class="encabezado-seccion">
+      <h2>Productos</h2>
+      <button id="btn-nuevo" class="btn btn-primario">+ Nuevo producto</button>
+    </div>
+
+    <div class="filtros">
+      <input type="search" id="buscar" placeholder="Buscar por nombre o código...">
+      <label><input type="checkbox" id="solo-bajo"> Solo stock bajo</label>
+    </div>
+
+    <div id="mensaje" class="mensaje" hidden></div>
+
+    <div class="tabla-contenedor">
+      <table>
+        <thead>
+          <tr>
+            <th>Código</th>
+            <th>Producto</th>
+            <th>Categoría</th>
+            <th class="num">Precio base</th>
+            <th class="num">IEPS</th>
+            <th class="num">IVA</th>
+            <th class="num">Precio final</th>
+            <th class="num">Stock</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody id="tabla-productos"></tbody>
+      </table>
+    </div>
+  </main>
+
+  <dialog id="dialogo">
+    <form id="formulario">
+      <h3 id="titulo-dialogo">Nuevo producto</h3>
+
+      <label>Código
+        <input type="text" name="codigo" required>
+      </label>
+      <label>Nombre
+        <input type="text" name="nombre" required>
+      </label>
+      <label>Categoría
+        <select name="categoria_id" id="categoria_id" required></select>
+      </label>
+      <label>Precio base (sin impuestos)
+        <input type="number" name="precio_base" min="0" step="0.01" required>
+      </label>
+      <label>Litros (solo bebidas)
+        <input type="number" name="litros" min="0" step="0.001" value="0">
+      </label>
+      <label>Stock inicial
+        <input type="number" name="stock" id="stock" min="0" step="1" value="0">
+        <small id="ayuda-stock" hidden>El stock se modifica con entradas y salidas (módulo de inventario).</small>
+      </label>
+      <label>Stock mínimo (para la alerta)
+        <input type="number" name="stock_minimo" min="0" step="1" value="5">
+      </label>
+
+      <p id="error-form" class="error" hidden></p>
+
+      <div class="botones-form">
+        <button type="button" id="btn-cancelar" class="btn btn-secundario">Cancelar</button>
+        <button type="submit" class="btn btn-primario">Guardar</button>
+      </div>
+    </form>
+  </dialog>
+
+  <script src="js/productos.js"></script>
+</body>
+</html>
