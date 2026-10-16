@@ -2,7 +2,7 @@ const bcrypt = require('bcryptjs');
 const Usuario = require('../models/usuario');
 
 function login(req, res) {
-  const usuario = String(req.body?.usuario ?? '').trim();
+  const usuario = String(req.body?.usuario ?? '').trim().toLowerCase();
   const password = String(req.body?.password ?? '');
   if (!usuario || !password) {
     return res.status(400).json({ error: 'Escribe tu usuario y contraseña' });

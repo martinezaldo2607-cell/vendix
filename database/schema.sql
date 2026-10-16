@@ -38,7 +38,8 @@ CREATE TABLE IF NOT EXISTS usuarios (
   usuario        TEXT NOT NULL UNIQUE CHECK (length(usuario) <= 50),
   password_hash  TEXT NOT NULL,
   rol            TEXT NOT NULL CHECK (rol IN ('ADMINISTRADOR', 'CAJERO')),
-  activo         INTEGER NOT NULL DEFAULT 1 CHECK (activo IN (0, 1))
+  activo         INTEGER NOT NULL DEFAULT 1 CHECK (activo IN (0, 1)),
+  eliminado      INTEGER NOT NULL DEFAULT 0 CHECK (eliminado IN (0, 1))
 );
 
 CREATE TABLE IF NOT EXISTS ventas (
