@@ -19,6 +19,7 @@ function mostrarVista(nombre) {
   el('btn-cobrar').hidden = nombre !== 'catalogo';
   el('btn-confirmar').hidden = nombre !== 'cobro';
   el('fila-cambio').hidden = nombre !== 'cobro';
+  el('btn-vaciar').hidden = nombre !== 'catalogo';
   actualizarBotones();
 }
 
@@ -152,6 +153,7 @@ function pintarVenta() {
 
 function actualizarBotones() {
   const hayVenta = calculo !== null;
+  el('btn-vaciar').disabled = !hayVenta;
   const num = Number(recibido || 0);
   const dif = hayVenta ? Math.round((num - calculo.total) * 100) / 100 : 0;
 
@@ -292,6 +294,21 @@ el('btn-actualizar').addEventListener('click', async () => {
   }
 });
 actualizarAutomaticamente(() => recargarCatalogo(true).catch(() => {}));
+
+// Vaciar la venta actual (con confirmación)
+el('btn-vaciar').addEventListener('click', (e) => {
+  if (carrito.size === 0) return;
+  e.currentTarget.blur();   // para que un Enter posterior no lo active otra vez
+  el('dialogo-vaciar').showModal();
+});
+el('vaciar-cancelar').addEventListener('click', () => el('dialogo-vaciar').close());
+el('vaciar-confirmar').addEventListener('click', () => {
+  el('dialogo-vaciar').close();
+  carrito.clear();
+  actualizarVenta();   // con el carrito vacío limpia la pantalla y descarta cálculos pendientes
+  avisar('Venta vaciada');
+});
+
 
 // ---------- Arranque ----------
 mostrarVista('catalogo');

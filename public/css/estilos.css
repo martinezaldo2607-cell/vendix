@@ -313,3 +313,7 @@ td:first-child { white-space: normal; overflow-wrap: anywhere; max-width: 320px;
 @media print {
   .contenido { padding: 0; }
 }
+
+.cabecera-venta { display: flex; justify-content: space-between; align-items: center; gap: 0.5rem; margin-bottom: 1rem; }
+.cabecera-venta h3 { margin: 0; }
+.btn-chico { padding: 0.3rem 0.7rem; font-size: 0.85rem; }
