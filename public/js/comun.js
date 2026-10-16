@@ -12,6 +12,7 @@ const MENU = [
 
 const ROLES = { ADMINISTRADOR: 'Administrador', CAJERO: 'Cajero' };
 let USUARIO = null;
+let CONFIG = null;
 
 const moneda = new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' });
 
@@ -44,6 +45,7 @@ function mostrarMensaje(texto, tipo) {
 
 async function montarLayout() {
   USUARIO = await api('/api/auth/yo');
+  CONFIG = await api('/api/configuracion');
 
   // Páginas restringidas: <body data-roles="ADMINISTRADOR">
   const permitidos = document.body.dataset.roles;
@@ -69,3 +71,27 @@ async function montarLayout() {
 }
 
 const sesionLista = montarLayout().catch(() => {});
+
+function fechaLegible(texto) {
+  const [f, h = ''] = String(texto).split(' ');
+  const [a, m, d] = f.split('-');
+  return `${d}/${m}/${a} ${h.slice(0, 5)}`;
+}
+
+function htmlTicket(v) {
+  return `
+    <div class="ticket">
+      <h3 class="logo-ticket">Vendix<span>.</span></h3>
+      <p class="meta">${fechaLegible(v.fecha_hora)} · Folio ${esc(v.folio)} · Cajero: ${esc(v.cajero)}</p>
+      ${v.detalle.map((d) => `
+        <div class="linea-ticket">
+          <span>${esc(d.nombre_producto)}</span>
+          <span>× ${d.cantidad}</span>
+          <span>${moneda.format(d.total)}</span>
+        </div>`).join('')}
+      <div class="total-ticket"><span>Total</span><strong>${moneda.format(v.total)}</strong></div>
+      <div class="linea-ticket fina"><span>Pago en efectivo</span><span></span><span>${moneda.format(v.monto_recibido)}</span></div>
+      <div class="cambio"><span>Cambio</span><strong>${moneda.format(v.cambio)}</strong></div>
+      ${v.ieps + v.iva > 0 ? `<p class="desglose">Incluye: subtotal ${moneda.format(v.subtotal)} · IEPS ${moneda.format(v.ieps)} · IVA ${moneda.format(v.iva)}</p>` : ''}
+    </div>`;
+}

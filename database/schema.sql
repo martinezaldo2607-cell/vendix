@@ -28,7 +28,8 @@ CREATE TABLE IF NOT EXISTS productos (
   litros        REAL NOT NULL DEFAULT 0 CHECK (litros >= 0),
   stock         INTEGER NOT NULL DEFAULT 0 CHECK (stock >= 0),
   stock_minimo  INTEGER NOT NULL DEFAULT 10 CHECK (stock_minimo >= 0),
-  activo        INTEGER NOT NULL DEFAULT 1 CHECK (activo IN (0, 1))
+  activo        INTEGER NOT NULL DEFAULT 1 CHECK (activo IN (0, 1)),
+  eliminado     INTEGER NOT NULL DEFAULT 0 CHECK (eliminado IN (0, 1))
 );
 
 CREATE TABLE IF NOT EXISTS usuarios (
@@ -78,10 +79,11 @@ CREATE TABLE IF NOT EXISTS movimientos_inventario (
 );
 
 CREATE TABLE IF NOT EXISTS configuracion_negocio (
-  id               INTEGER PRIMARY KEY CHECK (id = 1),
-  nombre_tienda    TEXT NOT NULL CHECK (length(nombre_tienda) <= 100),
-  moneda           TEXT NOT NULL DEFAULT 'MXN' CHECK (length(moneda) <= 10),
-  ultimo_respaldo  TEXT
+  id                  INTEGER PRIMARY KEY CHECK (id = 1),
+  nombre_tienda       TEXT NOT NULL CHECK (length(nombre_tienda) <= 100),
+  moneda              TEXT NOT NULL DEFAULT 'MXN' CHECK (length(moneda) <= 10),
+  calcular_impuestos  INTEGER NOT NULL DEFAULT 0 CHECK (calcular_impuestos IN (0, 1)),
+  ultimo_respaldo     TEXT
 );
 
 CREATE INDEX IF NOT EXISTS idx_productos_nombre ON productos(nombre);

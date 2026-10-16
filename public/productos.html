@@ -15,6 +15,7 @@
     <div class="filtros">
       <input type="search" id="buscar" placeholder="Buscar por nombre o código...">
       <label><input type="checkbox" id="solo-bajo"> Solo stock bajo</label>
+      <label><input type="checkbox" id="ver-desactivados"> Mostrar desactivados</label>
     </div>
 
     <div id="mensaje" class="mensaje" hidden></div>
@@ -23,8 +24,8 @@
       <table>
         <thead>
           <tr>
-            <th>Nombre</th><th>Categoría</th><th>Precio base</th>
-            <th>Precio final</th><th>Existencias</th><th></th>
+            <th>Nombre</th><th>Categoría</th><th id="th-base">Precio base</th>
+            <th id="th-final">Precio final</th><th>Existencias</th><th></th>
           </tr>
         </thead>
         <tbody id="tabla-productos"></tbody>
@@ -32,12 +33,12 @@
     </div>
   </main>
 
-  <dialog id="dialogo-baja">
-    <h3>¿Eliminar producto?</h3>
-    <p id="texto-baja"></p>
+  <dialog id="dialogo">
+    <h3 id="dialogo-titulo"></h3>
+    <p id="dialogo-texto"></p>
     <div class="botones">
-      <button id="confirmar-baja" class="btn btn-peligro">Eliminar</button>
-      <button id="cancelar-baja" class="btn btn-secundario">Cancelar</button>
+      <button id="dialogo-confirmar" class="btn btn-primario">Confirmar</button>
+      <button id="dialogo-cancelar" class="btn btn-secundario">Cancelar</button>
     </div>
   </dialog>
 

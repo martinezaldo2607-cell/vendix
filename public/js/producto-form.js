@@ -11,10 +11,15 @@ const opciones = (lista) =>
 // Los litros solo se piden si el impuesto es por litro
 function actualizarLitros() {
   const imp = impuestos.find((i) => i.id === Number(form.impuesto_id.value));
-  bloqueLitros.hidden = !(imp && imp.ieps_tipo === 'cuota_litro');
+  bloqueLitros.hidden = !(CONFIG.calcular_impuestos && imp && imp.ieps_tipo === 'cuota_litro');
 }
 
 async function iniciar() {
+    if (!CONFIG.calcular_impuestos) {
+    document.getElementById('bloque-impuesto').hidden = true;
+    form.impuesto_id.required = false;
+    document.getElementById('etq-precio').textContent = 'Precio (MXN)';
+  }
   const [categorias, imps] = await Promise.all([api('/api/categorias'), api('/api/impuestos')]);
   impuestos = imps;
   form.categoria_id.innerHTML = opciones(categorias);
@@ -53,7 +58,7 @@ form.addEventListener('submit', async (e) => {
   }
 });
 
-iniciar().catch((err) => {
+sesionLista.then(iniciar).catch((err) => {
   errorForm.textContent = err.message;
   errorForm.hidden = false;
 });

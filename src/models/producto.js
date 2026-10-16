@@ -19,6 +19,7 @@ function registrarMovimiento(productoId, usuarioId, tipo, cantidad, observacion)
 function listar({ buscar = '', stockBajo = false, incluirInactivos = false } = {}) {
   let sql = SELECT_BASE + ' WHERE 1 = 1';
   const params = [];
+  sql += ' AND p.eliminado = 0';
   if (!incluirInactivos) sql += ' AND p.activo = 1';
   if (buscar) {
     sql += ' AND (p.nombre LIKE ? OR p.codigo LIKE ?)';
@@ -30,7 +31,7 @@ function listar({ buscar = '', stockBajo = false, incluirInactivos = false } = {
 }
 
 function obtener(id) {
-  return db.prepare(SELECT_BASE + ' WHERE p.id = ?').get(id);
+  return db.prepare(SELECT_BASE + ' WHERE p.id = ? AND p.eliminado = 0').get(id);
 }
 
 // Crea el producto, le genera el código y registra su existencia inicial
@@ -68,10 +69,26 @@ function desactivar(id) {
   db.prepare('UPDATE productos SET activo = 0 WHERE id = ?').run(id);
 }
 
+function reactivar(id) {
+  db.prepare('UPDATE productos SET activo = 1 WHERE id = ?').run(id);
+}
+
+// Baja lógica: el producto desaparece de todo, pero las ventas pasadas lo conservan
+function eliminar(id) {
+  db.prepare('UPDATE productos SET eliminado = 1, activo = 0 WHERE id = ?').run(id);
+}
+
 // Suma existencias y deja registrado el movimiento, todo en una sola transacción
 const registrarEntrada = db.transaction((id, cantidad, observacion, usuarioId) => {
   db.prepare('UPDATE productos SET stock = stock + ? WHERE id = ?').run(cantidad, id);
   registrarMovimiento(id, usuarioId, 'entrada', cantidad, observacion || 'Entrada de mercancía');
 });
 
-module.exports = { listar, obtener, crear, actualizar, desactivar, registrarEntrada };
+// Impuesto "sin impuestos", que se asigna cuando la tienda no calcula impuestos
+function impuestoNinguno() {
+  return db.prepare(
+    "SELECT id FROM impuestos WHERE iva_tasa = 0 AND ieps_tipo = 'ninguno' ORDER BY id LIMIT 1"
+  ).get().id;
+}
+
+module.exports = { listar, obtener, crear, actualizar, desactivar, reactivar, eliminar, registrarEntrada, impuestoNinguno };
