@@ -14,8 +14,9 @@
 
     <div class="filtros">
       <input type="search" id="buscar" placeholder="Buscar por nombre o código...">
-      <label><input type="checkbox" id="solo-bajo"> Solo stock bajo</label>
-      <label><input type="checkbox" id="ver-desactivados"> Mostrar desactivados</label>
+      <label class="interruptor"><input type="checkbox" id="solo-bajo"><span class="pista"></span><span>Solo stock bajo</span></label>
+      <label class="interruptor"><input type="checkbox" id="solo-desactivados"><span class="pista"></span><span>Solo desactivados</span></label>
+      <button id="btn-actualizar" class="btn btn-secundario" type="button">↻ Actualizar</button>
     </div>
 
     <div id="mensaje" class="mensaje" hidden></div>

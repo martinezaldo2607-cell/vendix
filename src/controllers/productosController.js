@@ -59,6 +59,7 @@ function listar(req, res) {
     buscar: req.query.buscar || '',
     stockBajo: req.query.stock_bajo === '1',
     incluirInactivos: req.query.incluir_inactivos === '1',
+    soloDesactivados: req.query.solo_desactivados === '1',
   });
   const usa = Config.usaImpuestos();
   res.json(productos.map((p) => conImpuestos(p, usa)));

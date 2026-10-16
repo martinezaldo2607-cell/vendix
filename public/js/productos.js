@@ -1,7 +1,7 @@
 const cuerpo = document.getElementById('tabla-productos');
 const inputBuscar = document.getElementById('buscar');
 const checkBajo = document.getElementById('solo-bajo');
-const checkDesactivados = document.getElementById('ver-desactivados');
+const checkDesactivados = document.getElementById('solo-desactivados');
 const dialogo = document.getElementById('dialogo');
 
 let productos = [];
@@ -37,12 +37,14 @@ async function cargarProductos() {
   const params = new URLSearchParams();
   if (inputBuscar.value.trim()) params.set('buscar', inputBuscar.value.trim());
   if (checkBajo.checked) params.set('stock_bajo', '1');
-  if (checkDesactivados.checked) params.set('incluir_inactivos', '1');
+  if (checkDesactivados.checked) params.set('solo_desactivados', '1');
   try {
     productos = await api('/api/productos?' + params);
     pintarTabla();
+    return true;
   } catch (err) {
     mostrarMensaje(err.message, 'error');
+    return false;
   }
 }
 
@@ -52,7 +54,7 @@ function pintarTabla() {
   document.getElementById('th-final').hidden = !usa;
 
   if (productos.length === 0) {
-    cuerpo.innerHTML = '<tr><td colspan="6" class="vacio">No hay productos que mostrar.</td></tr>';
+      cuerpo.innerHTML = `<tr><td colspan="6" class="vacio">${checkDesactivados.checked ? 'No hay productos desactivados.' : 'No hay productos que mostrar.'}</td></tr>`;
     return;
   }
   cuerpo.innerHTML = productos.map((p) => `
@@ -113,7 +115,19 @@ inputBuscar.addEventListener('input', () => {
   clearTimeout(temporizador);
   temporizador = setTimeout(cargarProductos, 300);
 });
-checkBajo.addEventListener('change', cargarProductos);
-checkDesactivados.addEventListener('change', cargarProductos);
+
+// Los dos filtros son excluyentes: encender uno apaga el otro
+checkBajo.addEventListener('change', () => {
+  if (checkBajo.checked) checkDesactivados.checked = false;
+  cargarProductos();
+});
+checkDesactivados.addEventListener('change', () => {
+  if (checkDesactivados.checked) checkBajo.checked = false;
+  cargarProductos();
+});
+
+document.getElementById('btn-actualizar').addEventListener('click', async () => {
+  if (await cargarProductos()) avisar('Lista actualizada');
+});
 
 sesionLista.then(cargarProductos);

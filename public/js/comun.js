@@ -95,3 +95,24 @@ function htmlTicket(v) {
       ${v.ieps + v.iva > 0 ? `<p class="desglose">Incluye: subtotal ${moneda.format(v.subtotal)} · IEPS ${moneda.format(v.ieps)} · IVA ${moneda.format(v.iva)}</p>` : ''}
     </div>`;
 }
+
+// Aviso pequeño que aparece abajo a la derecha y se va solo
+function avisar(texto) {
+  let caja = document.getElementById('aviso-flotante');
+  if (!caja) {
+    caja = document.createElement('div');
+    caja.id = 'aviso-flotante';
+    caja.className = 'aviso-flotante';
+    document.body.appendChild(caja);
+  }
+  caja.textContent = texto;
+  caja.classList.add('visible');
+  clearTimeout(caja.temporizador);
+  caja.temporizador = setTimeout(() => caja.classList.remove('visible'), 2800);
+}
+
+// Ejecuta `funcion` cada cierto tiempo (si la pestaña está visible) y al volver a la pestaña
+function actualizarAutomaticamente(funcion, segundos = 20) {
+  setInterval(() => { if (!document.hidden) funcion(); }, segundos * 1000);
+  document.addEventListener('visibilitychange', () => { if (!document.hidden) funcion(); });
+}

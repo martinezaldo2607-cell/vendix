@@ -16,11 +16,12 @@ function registrarMovimiento(productoId, usuarioId, tipo, cantidad, observacion)
   ).run(productoId, usuarioId, tipo, cantidad, observacion);
 }
 
-function listar({ buscar = '', stockBajo = false, incluirInactivos = false } = {}) {
+function listar({ buscar = '', stockBajo = false, incluirInactivos = false, soloDesactivados = false } = {}) {
   let sql = SELECT_BASE + ' WHERE 1 = 1';
   const params = [];
   sql += ' AND p.eliminado = 0';
-  if (!incluirInactivos) sql += ' AND p.activo = 1';
+  if (soloDesactivados) sql += ' AND p.activo = 0';
+  else if (!incluirInactivos) sql += ' AND p.activo = 1';
   if (buscar) {
     sql += ' AND (p.nombre LIKE ? OR p.codigo LIKE ?)';
     params.push(`%${buscar}%`, `%${buscar}%`);
