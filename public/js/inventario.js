@@ -16,14 +16,26 @@ const ETIQUETAS = {
 
 let filas = [];
 
-async function cargar() {
+let ultimaFirma = null;
+
+async function cargar(silencioso = false) {
   const params = new URLSearchParams();
   if (inputBuscar.value.trim()) params.set('buscar', inputBuscar.value.trim());
   try {
-    filas = await api('/api/inventario?' + params);
+    const datos = await api('/api/inventario?' + params);
+    // La "firma" sirve para saber si algo cambió desde la última vez
+    const firma = params.toString() + JSON.stringify(datos);
+    const cambio = silencioso && ultimaFirma !== null && firma !== ultimaFirma;
+    ultimaFirma = firma;
+    if (silencioso && !cambio) return true;
+
+    filas = datos;
     pintar();
+    if (cambio) avisar('El inventario se actualizó');
+    return true;
   } catch (err) {
-    mostrarMensaje(err.message, 'error');
+    if (!silencioso) mostrarMensaje(err.message, 'error');
+    return false;
   }
 }
 
@@ -92,3 +104,8 @@ sesionLista.then(() => {
 });
 
 cargar();
+
+document.getElementById('btn-actualizar').addEventListener('click', async () => {
+  if (await cargar()) avisar('Inventario actualizado');
+});
+actualizarAutomaticamente(() => cargar(true));

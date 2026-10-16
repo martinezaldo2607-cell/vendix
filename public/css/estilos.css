@@ -253,3 +253,33 @@ td:first-child { white-space: normal; overflow-wrap: anywhere; max-width: 320px;
 .fila-desactivada td:not(.acciones) { opacity: 0.55; }
 .etiqueta-gris, .estado-desactivado { background: #e5e9ec; color: #5a6b76; }
 .acciones .btn { padding: 0.45rem 0.8rem; font-size: 0.88rem; }
+
+/* Interruptores */
+.interruptor { display: inline-flex; align-items: center; gap: 0.6rem; cursor: pointer; user-select: none; }
+.interruptor input { position: absolute; width: 0; height: 0; padding: 0; border: 0; opacity: 0; }
+.interruptor .pista {
+  position: relative; flex-shrink: 0; width: 44px; height: 24px;
+  border-radius: 999px; background: #b9c8d0; transition: background 0.2s;
+}
+.interruptor .pista::after {
+  content: ''; position: absolute; top: 3px; left: 3px; width: 18px; height: 18px;
+  border-radius: 50%; background: #fff; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  transition: transform 0.2s;
+}
+.interruptor input:checked + .pista { background: var(--petroleo); }
+.interruptor input:checked + .pista::after { transform: translateX(20px); }
+.interruptor input:focus-visible + .pista { outline: 2px solid var(--medio); outline-offset: 2px; }
+
+/* Aviso pequeño */
+.aviso-flotante {
+  position: fixed; right: 1.2rem; bottom: 1.2rem; z-index: 60; max-width: 320px;
+  padding: 0.7rem 1rem; border-radius: 12px; background: var(--petroleo); color: #fff;
+  font-size: 0.9rem; box-shadow: 0 6px 24px rgba(0, 0, 0, 0.25);
+  opacity: 0; transform: translateY(10px); pointer-events: none;
+  transition: opacity 0.25s, transform 0.25s;
+}
+.aviso-flotante.visible { opacity: 1; transform: none; }
+
+/* Buscador con botón de actualizar (Ventas) */
+.fila-buscar { display: flex; align-items: flex-end; gap: 0.8rem; }
+.fila-buscar .etiqueta-buscar { flex: 1; }

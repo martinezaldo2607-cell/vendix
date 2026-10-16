@@ -9,6 +9,7 @@ let recibido = '';         // lo que se va tecleando en el cobro
 let vistaActual = 'catalogo';
 let turno = 0;
 let cobrando = false;
+let firmaCatalogo = null;
 
 // ---------- Vistas ----------
 function mostrarVista(nombre) {
@@ -60,17 +61,33 @@ function pintarTarjetas() {
   }).join('');
 }
 
-async function recargarCatalogo() {
-  [productos, categorias] = await Promise.all([api('/api/productos'), api('/api/categorias')]);
-  // Si las existencias cambiaron, se ajusta lo que ya estaba en la venta
+async function recargarCatalogo(silencioso = false) {
+  // Nunca se toca la venta mientras se está cobrando
+  if (silencioso && (vistaActual !== 'catalogo' || cobrando)) return;
+
+  const [prod, cats] = await Promise.all([api('/api/productos'), api('/api/categorias')]);
+  const firma = JSON.stringify([prod, cats]);
+  const cambio = firmaCatalogo !== null && firma !== firmaCatalogo;
+  firmaCatalogo = firma;
+  if (silencioso && !cambio) return;
+
+  productos = prod;
+  categorias = cats;
+
+  // Si cambió la disponibilidad, se ajusta lo que ya estaba en la venta
+  let ajustada = false;
   for (const [id, cantidad] of carrito) {
     const p = productos.find((x) => x.id === id);
-    if (!p || p.stock === 0) carrito.delete(id);
-    else if (cantidad > p.stock) carrito.set(id, p.stock);
+    if (!p || p.stock === 0) { carrito.delete(id); ajustada = true; }
+    else if (cantidad > p.stock) { carrito.set(id, p.stock); ajustada = true; }
   }
+
   pintarChips();
   pintarTarjetas();
   await actualizarVenta();
+
+  if (ajustada) mostrarMensaje('Se ajustó la venta: cambió la disponibilidad de algún producto', 'error');
+  else if (cambio && silencioso) avisar('Catálogo actualizado');
 }
 
 // ---------- Venta actual ----------
@@ -229,6 +246,15 @@ el('btn-volver').addEventListener('click', () => mostrarVista('catalogo'));
 el('btn-confirmar').addEventListener('click', confirmar);
 el('btn-imprimir').addEventListener('click', () => window.print());
 el('btn-nueva').addEventListener('click', () => mostrarVista('catalogo'));
+el('btn-actualizar').addEventListener('click', async () => {
+  try {
+    await recargarCatalogo();
+    avisar('Catálogo actualizado');
+  } catch (err) {
+    mostrarMensaje(err.message, 'error');
+  }
+});
+actualizarAutomaticamente(() => recargarCatalogo(true).catch(() => {}));
 
 // ---------- Arranque ----------
 mostrarVista('catalogo');
