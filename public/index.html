@@ -9,9 +9,44 @@
 <body data-pagina="inicio">
   <aside id="barra-lateral" class="barra-lateral"></aside>
   <main class="contenido">
-    <h2 class="titulo">Buenos días</h2>
-    <p class="centrado">El panel principal se construye más adelante.</p>
+    <h2 class="titulo" id="saludo">Buenos días</h2>
+    <div id="mensaje" class="mensaje" hidden></div>
+
+    <div class="resumen">
+      <div class="dato">
+        <div class="icono">$</div>
+        <span class="etq" id="etq-ventas">Ventas del día</span>
+        <strong id="dato-ventas">$0.00</strong>
+        <small id="sub-ventas"></small>
+      </div>
+      <div class="dato">
+        <div class="icono">▦</div>
+        <span class="etq">Productos</span>
+        <strong id="dato-productos">0</strong>
+        <small>en catálogo</small>
+      </div>
+      <div class="dato">
+        <div class="icono">≡</div>
+        <span class="etq">Existencias</span>
+        <strong id="dato-existencias">0</strong>
+        <small>unidades</small>
+      </div>
+    </div>
+
+    <div class="paneles">
+      <section class="panel">
+        <h3>Alertas de stock bajo</h3>
+        <p class="sub">Productos por debajo de su mínimo</p>
+        <div id="alertas"></div>
+      </section>
+      <section class="panel">
+        <h3>Accesos rápidos</h3>
+        <div class="accesos" id="accesos"></div>
+      </section>
+    </div>
   </main>
+
   <script src="js/comun.js"></script>
+  <script src="js/inicio.js"></script>
 </body>
 </html>

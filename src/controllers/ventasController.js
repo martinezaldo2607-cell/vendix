@@ -58,4 +58,16 @@ function obtener(req, res) {
   res.json(venta);
 }
 
-module.exports = { calcular, crear, obtener };
+const FECHA = /^\d{4}-\d{2}-\d{2}$/;
+
+// El cajero solo recibe sus propias ventas
+function listar(req, res) {
+  const { desde, hasta } = req.query;
+  if ((desde && !FECHA.test(desde)) || (hasta && !FECHA.test(hasta))) {
+    return res.status(400).json({ error: 'Las fechas no son válidas' });
+  }
+  const u = req.session.usuario;
+  res.json(Venta.listar({ desde, hasta, usuarioId: u.rol === 'CAJERO' ? u.id : null }));
+}
+
+module.exports = { calcular, crear, obtener, listar };

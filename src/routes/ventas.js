@@ -7,6 +7,7 @@ const router = express.Router();
 router.use(requiereSesion);
 router.post('/calcular', ctrl.calcular);
 router.post('/', ctrl.crear);
+router.get('/', ctrl.listar);
 router.get('/:id', ctrl.obtener);
 
 module.exports = router;

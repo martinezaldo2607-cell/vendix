@@ -92,4 +92,19 @@ function obtener(id) {
   return venta;
 }
 
-module.exports = { ErrorNegocio, armarLineas, crear, obtener };
+function listar({ desde, hasta, usuarioId } = {}) {
+  let sql = `
+    SELECT v.id, v.folio, v.fecha_hora, v.total, u.nombre AS cajero
+    FROM ventas v
+    JOIN usuarios u ON u.id = v.usuario_id
+    WHERE 1 = 1
+  `;
+  const params = [];
+  if (usuarioId) { sql += ' AND v.usuario_id = ?'; params.push(usuarioId); }
+  if (desde) { sql += ' AND date(v.fecha_hora) >= ?'; params.push(desde); }
+  if (hasta) { sql += ' AND date(v.fecha_hora) <= ?'; params.push(hasta); }
+  sql += ' ORDER BY v.id DESC LIMIT 200';
+  return db.prepare(sql).all(...params);
+}
+
+module.exports = { ErrorNegocio, armarLineas, crear, obtener, listar };

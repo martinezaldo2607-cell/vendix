@@ -283,3 +283,37 @@ td:first-child { white-space: normal; overflow-wrap: anywhere; max-width: 320px;
 /* Buscador con botón de actualizar (Ventas) */
 .fila-buscar { display: flex; align-items: flex-end; gap: 0.8rem; }
 .fila-buscar .etiqueta-buscar { flex: 1; }
+
+/* Inicio */
+.resumen { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; max-width: 1000px; margin: 0 auto 1rem; }
+.dato { display: flex; flex-direction: column; align-items: center; gap: 0.25rem; padding: 1.2rem; background: var(--blanco); border: 1px solid var(--borde); border-radius: 14px; text-align: center; }
+.dato .icono { display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: 10px; background: var(--claro); color: var(--petroleo); font-weight: 700; }
+.dato .etq, .dato small { color: #5a7384; }
+.dato .etq { font-size: 0.9rem; }
+.dato strong { font-family: 'Playfair Display', serif; font-size: 2.2rem; line-height: 1.1; color: var(--petroleo); }
+
+.paneles { display: grid; grid-template-columns: 3fr 2fr; gap: 1rem; max-width: 1000px; margin: 0 auto; }
+.panel { padding: 1.3rem; background: var(--blanco); border: 1px solid var(--borde); border-radius: 14px; }
+.panel h3 { margin: 0; font-family: 'Playfair Display', serif; font-size: 1.25rem; }
+.panel .sub { margin: 0.2rem 0 0.8rem; color: #5a7384; font-size: 0.9rem; }
+.fila-alerta { display: flex; justify-content: space-between; align-items: center; gap: 1rem; padding: 0.6rem 0; border-top: 1px solid var(--borde); }
+.fila-alerta span:first-child { min-width: 0; overflow-wrap: anywhere; }
+.mas-alertas { display: block; margin-top: 0.6rem; font-size: 0.9rem; color: var(--medio); }
+.accesos { display: flex; flex-direction: column; gap: 0.6rem; margin-top: 0.8rem; }
+.accesos .btn { text-align: center; }
+
+/* Historial */
+.filtros-fecha label { display: flex; align-items: center; gap: 0.5rem; font-size: 0.9rem; }
+.filtros-fecha input { width: auto; }
+.filtros-fecha { justify-content: center; }
+
+@media (max-width: 800px) {
+  .resumen, .paneles { grid-template-columns: 1fr; }
+}
+@media print {
+  .contenido { padding: 0; }
+}
+
+.cabecera-venta { display: flex; justify-content: space-between; align-items: center; gap: 0.5rem; margin-bottom: 1rem; }
+.cabecera-venta h3 { margin: 0; }
+.btn-chico { padding: 0.3rem 0.7rem; font-size: 0.85rem; }
