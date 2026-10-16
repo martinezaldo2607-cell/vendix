@@ -30,4 +30,6 @@ function calcularLinea(producto, categoria, cantidad = 1) {
   return { subtotal: redondear(subtotal), ieps, iva, total };
 }
 
-module.exports = { calcularLinea, redondear };
+const SIN_IMPUESTOS = { iva_tasa: 0, ieps_tipo: 'ninguno', ieps_valor: 0 };
+
+module.exports = { calcularLinea, redondear, SIN_IMPUESTOS };

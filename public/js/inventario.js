@@ -11,6 +11,7 @@ const ETIQUETAS = {
   DISPONIBLE: ['Disponible', 'estado-ok'],
   STOCK_BAJO: ['Stock bajo', 'estado-bajo'],
   AGOTADO: ['Agotado', 'estado-agotado'],
+  DESACTIVADO: ['Desactivado', 'estado-desactivado'],
 };
 
 let filas = [];
@@ -37,7 +38,7 @@ function pintar() {
   cuerpo.innerHTML = visibles.map((f) => {
     const [texto, clase] = ETIQUETAS[f.estado];
     return `
-      <tr>
+      <tr class="${f.estado === 'DESACTIVADO' ? 'fila-desactivada' : ''}">
         <td>${esc(f.nombre)}</td>
         <td>${f.stock}</td>
         <td>${f.stock_minimo}</td>
@@ -53,7 +54,7 @@ async function abrirEntrada() {
   const todos = await api('/api/inventario');
   selectProducto.innerHTML =
     '<option value="">Seleccionar...</option>' +
-    todos.map((p) => `<option value="${p.id}">${esc(p.nombre)} (existencias: ${p.stock})</option>`).join('');
+    todos.map((p) => `<option value="${p.id}">${esc(p.nombre)} (existencias: ${p.stock})${p.estado === 'DESACTIVADO' ? ' [desactivado]' : ''}</option>`).join('');
   dialogo.showModal();
 }
 

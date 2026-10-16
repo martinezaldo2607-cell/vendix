@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ventas | Vendix</title>
+  <link rel="stylesheet" href="css/estilos.css">
+</head>
+<body data-pagina="ventas">
+  <aside id="barra-lateral" class="barra-lateral"></aside>
+
+  <div class="ventas-area">
+    <main class="ventas-centro">
+      <div id="mensaje" class="mensaje" hidden></div>
+
+      <section id="vista-catalogo">
+        <label class="etiqueta-buscar">Buscar producto
+          <input type="search" id="buscar" placeholder="Buscar por nombre">
+        </label>
+        <div id="chips" class="chips"></div>
+        <div id="tarjetas" class="tarjetas"></div>
+      </section>
+
+      <section id="vista-cobro" hidden>
+        <h2 class="titulo">Cobro en efectivo</h2>
+        <p class="centrado-texto">Total a cobrar</p>
+        <p class="monto-grande" id="cobro-total"></p>
+        <p class="centrado-texto">Monto recibido</p>
+        <p class="monto-grande" id="cobro-recibido"></p>
+        <div class="teclado" id="teclado"></div>
+        <div class="centrado"><button id="btn-volver" class="btn btn-secundario">Volver a la venta</button></div>
+      </section>
+
+      <section id="vista-ticket" hidden>
+        <div class="icono-ok no-imprimir">✓</div>
+        <h2 class="titulo no-imprimir">Venta registrada</h2>
+        <div id="ticket-contenido"></div>
+        <div class="botones-ticket no-imprimir">
+          <button id="btn-imprimir" class="btn btn-secundario">Imprimir ticket</button>
+          <button id="btn-nueva" class="btn btn-primario">Nueva venta</button>
+        </div>
+      </section>
+    </main>
+
+    <aside class="panel-venta" id="panel-venta">
+      <h3>Venta actual</h3>
+      <div id="lista-venta" class="lista-venta"></div>
+      <div class="pie-venta">
+        <div class="total-fila"><span>Total</span><strong id="total-venta">$0.00</strong></div>
+        <div id="fila-cambio" class="cambio" hidden><span>Cambio</span><strong id="cambio-venta"></strong></div>
+        <button id="btn-cobrar" class="btn btn-primario btn-block" disabled>Cobrar</button>
+        <button id="btn-confirmar" class="btn btn-primario btn-block" hidden disabled>Confirmar cobro</button>
+      </div>
+    </aside>
+  </div>
+
+  <script src="js/comun.js"></script>
+  <script src="js/ventas.js"></script>
+</body>
+</html>

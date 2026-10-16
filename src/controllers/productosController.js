@@ -1,10 +1,18 @@
 const Producto = require('../models/producto');
-const { calcularLinea } = require('../utils/impuestos');
+const { calcularLinea, SIN_IMPUESTOS } = require('../utils/impuestos');
+const Config = require('../models/configuracion');
 
-function conImpuestos(p) {
-  // p ya trae iva_tasa, ieps_tipo e ieps_valor del impuesto asignado
-  const r = calcularLinea({ precio_base: p.precio_base, litros: p.litros }, p);
+function conImpuestos(p, usaImpuestos) {
+  const r = calcularLinea({ precio_base: p.precio_base, litros: p.litros }, usaImpuestos ? p : SIN_IMPUESTOS);
   return { ...p, ieps: r.ieps, iva: r.iva, precio_final: r.total, stock_bajo: p.stock < p.stock_minimo };
+}
+
+// Si la tienda no calcula impuestos, el precio capturado es el precio final
+function ajustarSegunModo(datos) {
+  if (!Config.usaImpuestos()) {
+    datos.impuesto_id = Producto.impuestoNinguno();
+    datos.litros = 0;
+  }
 }
 
 const num = (v, defecto) => (v === undefined || v === null || v === '' ? defecto : Number(v));
@@ -52,7 +60,8 @@ function listar(req, res) {
     stockBajo: req.query.stock_bajo === '1',
     incluirInactivos: req.query.incluir_inactivos === '1',
   });
-  res.json(productos.map(conImpuestos));
+  const usa = Config.usaImpuestos();
+  res.json(productos.map((p) => conImpuestos(p, usa)));
 }
 
 function obtener(req, res) {
@@ -60,16 +69,17 @@ function obtener(req, res) {
   if (id === null) return res.status(400).json({ error: 'ID inválido' });
   const producto = Producto.obtener(id);
   if (!producto) return res.status(404).json({ error: 'Producto no encontrado' });
-  res.json(conImpuestos(producto));
+  res.json(conImpuestos(producto, Config.usaImpuestos()));
 }
 
 function crear(req, res) {
   const datos = leerDatos(req.body);
+  ajustarSegunModo(datos);
   const errores = validar(datos);
   if (errores.length) return res.status(400).json({ errores });
   try {
     const id = Producto.crear(datos, req.session.usuario.id);
-    res.status(201).json(conImpuestos(Producto.obtener(id)));
+    res.status(201).json(conImpuestos(Producto.obtener(id), Config.usaImpuestos()));
   } catch (err) {
     responderError(err, res);
   }
@@ -80,22 +90,27 @@ function actualizar(req, res) {
   if (id === null) return res.status(400).json({ error: 'ID inválido' });
   if (!Producto.obtener(id)) return res.status(404).json({ error: 'Producto no encontrado' });
   const datos = leerDatos(req.body);
+  ajustarSegunModo(datos);
   const errores = validar(datos);
   if (errores.length) return res.status(400).json({ errores });
   try {
     Producto.actualizar(id, datos, req.session.usuario.id);
-    res.json(conImpuestos(Producto.obtener(id)));
+    res.json(conImpuestos(Producto.obtener(id), Config.usaImpuestos()));
   } catch (err) {
     responderError(err, res);
   }
 }
 
-function eliminar(req, res) {
+function cambiarEstado(req, res, accion, mensaje) {
   const id = leerId(req);
   if (id === null) return res.status(400).json({ error: 'ID inválido' });
   if (!Producto.obtener(id)) return res.status(404).json({ error: 'Producto no encontrado' });
-  Producto.desactivar(id);
-  res.json({ mensaje: 'Producto dado de baja' });
+  Producto[accion](id);
+  res.json({ mensaje });
 }
 
-module.exports = { listar, obtener, crear, actualizar, eliminar };
+const desactivar = (req, res) => cambiarEstado(req, res, 'desactivar', 'Producto desactivado');
+const reactivar = (req, res) => cambiarEstado(req, res, 'reactivar', 'Producto reactivado');
+const eliminar = (req, res) => cambiarEstado(req, res, 'eliminar', 'Producto eliminado');
+
+module.exports = { listar, obtener, crear, actualizar, desactivar, reactivar, eliminar };

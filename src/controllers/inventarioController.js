@@ -1,13 +1,14 @@
 const Producto = require('../models/producto');
 
 function estadoDe(p) {
+  if (!p.activo) return 'DESACTIVADO';
   if (p.stock === 0) return 'AGOTADO';
   if (p.stock < p.stock_minimo) return 'STOCK_BAJO';
   return 'DISPONIBLE';
 }
 
 function listar(req, res) {
-  const filas = Producto.listar({ buscar: req.query.buscar || '' }).map((p) => ({
+    const filas = Producto.listar({ buscar: req.query.buscar || '', incluirInactivos: true }).map((p) => ({
     id: p.id,
     codigo: p.codigo,
     nombre: p.nombre,
@@ -33,7 +34,7 @@ function registrarEntrada(req, res) {
   if (errores.length) return res.status(400).json({ errores });
 
   const producto = Producto.obtener(productoId);
-  if (!producto || !producto.activo) {
+  if (!producto) {
     return res.status(404).json({ error: 'Producto no encontrado' });
   }
 

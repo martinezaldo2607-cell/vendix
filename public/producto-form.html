@@ -19,14 +19,14 @@
       <label>Categoría
         <select name="categoria_id" required></select>
       </label>
-      <label>Tipo de impuesto
+      <label id="bloque-impuesto">Impuesto
         <select name="impuesto_id" required></select>
       </label>
       <label id="bloque-litros" hidden>Litros del producto (para el IEPS por litro)
         <input type="number" name="litros" min="0" step="0.001" value="0">
       </label>
       <div class="fila-3">
-        <label>Precio base (MXN)
+        <label><span id="etq-precio">Precio base (MXN)</span>
           <input type="number" name="precio_base" min="0.01" step="0.01" placeholder="0.00" required>
         </label>
         <label>Existencias
