@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reportes | Vendix</title>
+  <link rel="stylesheet" href="css/estilos.css">
+</head>
+<body data-pagina="reportes" data-roles="ADMINISTRADOR">
+  <aside id="barra-lateral" class="barra-lateral"></aside>
+  <main class="contenido">
+    <h2 class="titulo">Reportes</h2>
+    <div class="centrado">
+      <button id="btn-exportar" class="btn btn-primario" type="button" disabled>Exportar a CSV</button>
+    </div>
+
+    <div id="mensaje" class="mensaje" hidden></div>
+
+    <div class="barra-reporte">
+      <label>Desde <input type="date" id="desde"></label>
+      <label>Hasta <input type="date" id="hasta"></label>
+      <button id="btn-generar" class="btn btn-secundario" type="button">Generar</button>
+    </div>
+
+    <div class="resumen resumen-2">
+      <div class="dato">
+        <div class="icono">$</div>
+        <span class="etq">Total vendido</span>
+        <strong id="total-vendido">$0.00</strong>
+      </div>
+      <div class="dato">
+        <div class="icono">#</div>
+        <span class="etq">Número de ventas</span>
+        <strong id="num-ventas">0</strong>
+      </div>
+    </div>
+
+    <h3 class="subtitulo">Ventas por día</h3>
+    <div class="tabla-contenedor">
+      <table>
+        <thead><tr><th>Fecha</th><th>Ventas</th><th>Total</th></tr></thead>
+        <tbody id="tabla-dias"></tbody>
+      </table>
+    </div>
+
+    <h3 class="subtitulo">Productos más vendidos</h3>
+    <div class="tabla-contenedor">
+      <table>
+        <thead><tr><th>#</th><th>Producto</th><th>Unidades vendidas</th><th>Importe</th></tr></thead>
+        <tbody id="tabla-productos"></tbody>
+      </table>
+    </div>
+  </main>
+
+  <script src="js/comun.js"></script>
+  <script src="js/reportes.js"></script>
+</body>
+</html>
