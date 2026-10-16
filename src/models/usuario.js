@@ -7,11 +7,11 @@ function buscarPorUsuario(usuario) {
 }
 
 function listar() {
-  return db.prepare(`SELECT ${CAMPOS} FROM usuarios ORDER BY activo DESC, nombre`).all();
+  return db.prepare(`SELECT ${CAMPOS} FROM usuarios WHERE eliminado = 0 ORDER BY activo DESC, nombre`).all();
 }
 
 function obtener(id) {
-  return db.prepare(`SELECT ${CAMPOS} FROM usuarios WHERE id = ?`).get(id);
+  return db.prepare(`SELECT ${CAMPOS} FROM usuarios WHERE id = ? AND eliminado = 0`).get(id);
 }
 
 function crear(d) {
@@ -28,4 +28,13 @@ const actualizar = db.transaction((id, d) => {
   }
 });
 
-module.exports = { buscarPorUsuario, listar, obtener, crear, actualizar };
+// Baja lógica: se conserva el historial (ventas y movimientos) y se libera el nombre de usuario
+function eliminar(id) {
+  db.prepare(`
+    UPDATE usuarios
+    SET eliminado = 1, activo = 0, usuario = substr(usuario, 1, 30) || '~baja' || id
+    WHERE id = ?
+  `).run(id);
+}
+
+module.exports = { buscarPorUsuario, listar, obtener, crear, actualizar, eliminar };

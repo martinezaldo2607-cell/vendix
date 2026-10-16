@@ -11,6 +11,9 @@
   <main class="contenido">
     <h2 class="titulo">Usuarios</h2>
     <div class="centrado"><button id="btn-nuevo" class="btn btn-primario" type="button">+ Agregar usuario</button></div>
+    <div class="filtros" style="justify-content:center">
+      <label class="interruptor"><input type="checkbox" id="ver-inactivos"><span class="pista"></span><span>Mostrar inactivos</span></label>
+    </div>
     <div id="mensaje" class="mensaje" hidden></div>
 
     <div class="tabla-contenedor">
@@ -50,6 +53,14 @@
         <button type="button" id="btn-cancelar" class="btn btn-secundario">Cancelar</button>
       </div>
     </form>
+  </dialog>
+  <dialog id="dialogo-eliminar">
+    <h3>¿Eliminar usuario?</h3>
+    <p id="texto-eliminar"></p>
+    <div class="botones">
+      <button id="eliminar-cancelar" class="btn btn-secundario" type="button" autofocus>Cancelar</button>
+      <button id="eliminar-confirmar" class="btn btn-peligro" type="button">Eliminar</button>
+    </div>
   </dialog>
 
   <script src="js/comun.js"></script>

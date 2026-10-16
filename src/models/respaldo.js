@@ -68,7 +68,13 @@ async function restaurar(nombre) {
     db.transaction(() => {
       for (const t of [...TABLAS].reverse()) db.exec(`DELETE FROM main.${t}`);
       db.exec(`DELETE FROM sqlite_sequence WHERE name IN (${TABLAS.map((t) => `'${t}'`).join(',')})`);
-      for (const t of TABLAS) db.exec(`INSERT INTO main.${t} SELECT * FROM respaldo.${t}`);
+      for (const t of TABLAS) {
+        // Solo las columnas que existen en ambas: así sirven también los respaldos de versiones anteriores
+        const nuevas = db.prepare(`PRAGMA main.table_info(${t})`).all().map((c) => c.name);
+        const viejas = new Set(db.prepare(`PRAGMA respaldo.table_info(${t})`).all().map((c) => c.name));
+        const comunes = nuevas.filter((c) => viejas.has(c)).join(', ');
+        db.exec(`INSERT INTO main.${t} (${comunes}) SELECT ${comunes} FROM respaldo.${t}`);
+      }
     })();
   } finally {
     db.pragma('foreign_keys = ON');

@@ -2,16 +2,31 @@ const el = (id) => document.getElementById(id);
 const form = el('formulario');
 let usuarios = [];
 let idEditando = null;
+let pendiente = null;   // usuario que se va a eliminar
 
 async function cargar() {
   usuarios = await api('/api/usuarios');
-  el('tabla-usuarios').innerHTML = usuarios.map((u) => `
+  pintar();
+}
+
+function pintar() {
+  const verInactivos = el('ver-inactivos').checked;
+  const visibles = usuarios.filter((u) => u.activo || verInactivos);
+
+  if (visibles.length === 0) {
+    el('tabla-usuarios').innerHTML = '<tr><td colspan="5" class="vacio">No hay usuarios que mostrar.</td></tr>';
+    return;
+  }
+  el('tabla-usuarios').innerHTML = visibles.map((u) => `
     <tr class="${u.activo ? '' : 'fila-desactivada'}">
       <td>${esc(u.nombre)}</td>
       <td>${esc(u.usuario)}</td>
       <td><span class="estado estado-neutro">${ROLES[u.rol]}</span></td>
       <td><span class="estado ${u.activo ? 'estado-ok' : 'estado-desactivado'}">${u.activo ? 'Activo' : 'Inactivo'}</span></td>
-      <td class="acciones"><button class="btn btn-secundario" data-id="${u.id}">Editar</button></td>
+      <td class="acciones">
+        <button class="btn btn-secundario" data-accion="editar" data-id="${u.id}">Editar</button>
+        ${u.id === USUARIO.id ? '' : `<button class="btn btn-peligro" data-accion="eliminar" data-id="${u.id}">Eliminar</button>`}
+      </td>
     </tr>`).join('');
 }
 
@@ -65,10 +80,36 @@ form.addEventListener('submit', async (e) => {
 
 el('tabla-usuarios').addEventListener('click', (e) => {
   const b = e.target.closest('button[data-id]');
-  if (b) abrir(usuarios.find((u) => u.id === Number(b.dataset.id)));
+  if (!b) return;
+  const u = usuarios.find((x) => x.id === Number(b.dataset.id));
+
+  if (b.dataset.accion === 'eliminar') {
+    pendiente = u;
+    el('texto-eliminar').textContent =
+      `Se eliminará a ${u.nombre} (${u.usuario}). Ya no podrá entrar y desaparecerá de esta lista, ` +
+      'pero sus ventas y movimientos se conservan en el historial. ' +
+      'Si solo quieres que no entre por ahora, mejor desactiva su cuenta desde Editar.';
+    el('dialogo-eliminar').showModal();
+  } else {
+    abrir(u);
+  }
 });
+
+el('eliminar-cancelar').addEventListener('click', () => el('dialogo-eliminar').close());
+el('eliminar-confirmar').addEventListener('click', async () => {
+  el('dialogo-eliminar').close();
+  try {
+    await api(`/api/usuarios/${pendiente.id}`, { method: 'DELETE' });
+    mostrarMensaje('Usuario eliminado', 'ok');
+    await cargar();
+  } catch (err) {
+    mostrarMensaje(err.message, 'error');
+  }
+});
+
 el('btn-nuevo').addEventListener('click', () => abrir());
 el('btn-cancelar').addEventListener('click', () => el('dialogo').close());
+el('ver-inactivos').addEventListener('change', pintar);
 
 sesionLista.then(() => {
   if (USUARIO && USUARIO.rol === 'ADMINISTRADOR') {

@@ -84,4 +84,14 @@ function actualizar(req, res) {
   }
 }
 
-module.exports = { listar, obtener, crear, actualizar };
+function eliminar(req, res) {
+  const id = leerId(req);
+  if (id === null || !Usuario.obtener(id)) return res.status(404).json({ error: 'Usuario no encontrado' });
+  if (id === req.session.usuario.id) {
+    return res.status(400).json({ error: 'No puedes eliminar tu propia cuenta' });
+  }
+  Usuario.eliminar(id);
+  res.json({ mensaje: 'Usuario eliminado' });
+}
+
+module.exports = { listar, obtener, crear, actualizar, eliminar };
