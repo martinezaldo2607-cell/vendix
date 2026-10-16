@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ajustes | Vendix</title>
+  <link rel="stylesheet" href="css/estilos.css">
+</head>
+<body data-pagina="ajustes" data-roles="ADMINISTRADOR">
+  <aside id="barra-lateral" class="barra-lateral"></aside>
+  <main class="contenido">
+    <h2 class="titulo">Ajustes</h2>
+    <div id="mensaje" class="mensaje" hidden></div>
+
+    <div class="paneles-ajustes">
+      <section class="panel">
+        <h3>Negocio</h3>
+        <form id="form-negocio">
+          <label>Nombre de la tienda
+            <input type="text" name="nombre_tienda" maxlength="100" required>
+          </label>
+          <label>Moneda
+            <select name="moneda">
+              <option value="MXN">MXN (peso mexicano)</option>
+              <option value="USD">USD (dólar)</option>
+            </select>
+          </label>
+          <p class="nota-izq">Cambiar la moneda solo cambia el símbolo; no convierte los montos.</p>
+          <label class="interruptor">
+            <input type="checkbox" name="calcular_impuestos"><span class="pista"></span>
+            <span>Calcular IVA e IEPS en productos y ventas</span>
+          </label>
+          <p class="nota-izq">Apagado: el precio que captures es el precio final. Encendido: cada producto lleva su impuesto y el ticket muestra el desglose.</p>
+          <p id="error-negocio" class="error" hidden></p>
+          <button type="submit" class="btn btn-primario">Guardar cambios</button>
+        </form>
+      </section>
+
+      <section class="panel">
+        <h3>Respaldo de la base de datos</h3>
+        <p class="sub">Último respaldo: <span id="ultimo-respaldo">—</span></p>
+        <button id="btn-respaldar" class="btn btn-primario" type="button">Respaldar ahora</button>
+
+        <h4 class="sub-titulo">Respaldos guardados</h4>
+        <div id="lista-respaldos"></div>
+        <p class="nota-izq">Se guardan en la carpeta «respaldos» del programa. Descarga uno y guárdalo en una memoria USB o en la nube: si el equipo falla, un respaldo que está en el mismo equipo se pierde con él.</p>
+      </section>
+    </div>
+  </main>
+
+  <dialog id="dialogo-restaurar">
+    <h3>¿Restaurar este respaldo?</h3>
+    <p id="texto-restaurar"></p>
+    <div class="botones">
+      <button id="restaurar-cancelar" class="btn btn-secundario" type="button" autofocus>Cancelar</button>
+      <button id="restaurar-confirmar" class="btn btn-peligro" type="button">Restaurar</button>
+    </div>
+  </dialog>
+
+  <script src="js/comun.js"></script>
+  <script src="js/ajustes.js"></script>
+</body>
+</html>

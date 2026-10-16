@@ -35,6 +35,8 @@ app.use('/api/impuestos', requiereSesion, require('./routes/impuestos'));
 app.use('/api/configuracion', require('./routes/configuracion'));
 app.use('/api/inicio', require('./routes/inicio'));
 app.use('/api/reportes', require('./routes/reportes'));
+app.use('/api/usuarios', require('./routes/usuarios'));
+app.use('/api/respaldos', require('./routes/respaldos'));
 
 app.listen(PORT, () => {
   console.log(`Vendix corriendo en http://localhost:${PORT}`);

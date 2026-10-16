@@ -14,7 +14,14 @@ const ROLES = { ADMINISTRADOR: 'Administrador', CAJERO: 'Cajero' };
 let USUARIO = null;
 let CONFIG = null;
 
-const moneda = new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' });
+const formatosMoneda = {};
+const moneda = {
+  format(n) {
+    const codigo = (CONFIG && CONFIG.moneda) || 'MXN';
+    formatosMoneda[codigo] ||= new Intl.NumberFormat('es-MX', { style: 'currency', currency: codigo });
+    return formatosMoneda[codigo].format(n);
+  },
+};
 
 function esc(texto) {
   return String(texto).replace(/[&<>"']/g, (c) => ({
@@ -57,6 +64,7 @@ async function montarLayout() {
   const activa = document.body.dataset.pagina;
   document.getElementById('barra-lateral').innerHTML = `
     <div class="logo">Vendix<span>.</span></div>
+    <div class="tienda">${esc(CONFIG.nombre_tienda)}</div>
     <nav>${MENU.filter((m) => m[3].includes(USUARIO.rol)).map(([id, texto, url]) =>
       `<a href="${url}" class="${id === activa ? 'activo' : ''}">${texto}</a>`).join('')}</nav>
     <div class="usuario">
@@ -82,6 +90,7 @@ function htmlTicket(v) {
   return `
     <div class="ticket">
       <h3 class="logo-ticket">Vendix<span>.</span></h3>
+      ${CONFIG ? `<p class="tienda-ticket">${esc(CONFIG.nombre_tienda)}</p>` : ''}
       <p class="meta">${fechaLegible(v.fecha_hora)} · Folio ${esc(v.folio)} · Cajero: ${esc(v.cajero)}</p>
       ${v.detalle.map((d) => `
         <div class="linea-ticket">
