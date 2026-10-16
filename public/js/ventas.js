@@ -157,7 +157,7 @@ function actualizarBotones() {
 
   el('panel-venta').classList.toggle('solo-lectura', vistaActual === 'cobro');
   el('btn-cobrar').disabled = !hayVenta;
-  el('btn-cobrar').textContent = hayVenta ? `Cobrar ${moneda.format(calculo.total)}` : 'Cobrar';
+  el('btn-cobrar').textContent = hayVenta ? `Cobrar ${moneda.format(calculo.total)} (Enter)` : 'Cobrar';
   el('btn-confirmar').disabled = !hayVenta || dif < 0;
 
   if (vistaActual === 'cobro' && hayVenta) {
@@ -207,6 +207,14 @@ async function confirmar() {
   }
 }
 
+// Actualiza los totales y abre la pantalla de cobro
+async function irACobrar() {
+  await actualizarVenta();   // asegura que el total en pantalla sea el vigente
+  if (!calculo) return;
+  recibido = '';
+  mostrarVista('cobro');
+}
+
 // ---------- Eventos ----------
 el('teclado').innerHTML = ['1', '2', '3', '4', '5', '6', '7', '8', '9', 'C', '0', '.']
   .map((t) => `<button class="tecla" data-tecla="${t}">${t}</button>`).join('');
@@ -217,6 +225,27 @@ el('teclado').addEventListener('click', (e) => {
 });
 
 document.addEventListener('keydown', (e) => {
+  // Esc: del cobro regresa a la venta, sin perder lo capturado
+  if (e.key === 'Escape' && vistaActual === 'cobro') {
+    mostrarVista('catalogo');
+    return;
+  }
+
+  // No se interfiere con campos de texto, enlaces, listas, ventanas emergentes
+  // ni con botones que ya tienen su propio Enter (volver y actualizar)
+  if (e.target.closest('a, input, select, textarea, dialog, #btn-volver, #btn-actualizar, #btn-exacto')) return;
+
+  // Enter: en el catálogo abre el cobro, y en el cobro confirma
+  if (e.key === 'Enter' && (vistaActual === 'catalogo' || vistaActual === 'cobro')) {
+    e.preventDefault();      // evita que Enter pulse el botón que tenga el foco
+    if (e.repeat) return;    // mantener Enter presionado no repite la acción
+
+    if (vistaActual === 'catalogo' && carrito.size > 0) irACobrar();
+    else if (vistaActual === 'cobro' && !el('btn-confirmar').disabled) confirmar();
+    return;
+  }
+
+  // Teclado numérico físico en la pantalla de cobro
   if (vistaActual !== 'cobro') return;
   if (/^[0-9.]$/.test(e.key)) teclear(e.key);
   else if (e.key === 'Backspace') { recibido = recibido.slice(0, -1); actualizarBotones(); }
@@ -241,10 +270,18 @@ el('lista-venta').addEventListener('click', (e) => {
 });
 
 el('buscar').addEventListener('input', pintarTarjetas);
-el('btn-cobrar').addEventListener('click', () => { recibido = ''; mostrarVista('cobro'); });
+el('btn-cobrar').addEventListener('click', irACobrar);
 el('btn-volver').addEventListener('click', () => mostrarVista('catalogo'));
 el('btn-confirmar').addEventListener('click', confirmar);
 el('btn-imprimir').addEventListener('click', () => window.print());
+// Llena el monto recibido con el total exacto
+// Llena el monto recibido con el total exacto
+el('btn-exacto').addEventListener('click', (e) => {
+  if (!calculo) return;
+  recibido = String(calculo.total);
+  actualizarBotones();
+  e.currentTarget.blur();   // así el siguiente Enter confirma el cobro
+});
 el('btn-nueva').addEventListener('click', () => mostrarVista('catalogo'));
 el('btn-actualizar').addEventListener('click', async () => {
   try {

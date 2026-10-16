@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Historial | Vendix</title>
+  <link rel="stylesheet" href="css/estilos.css">
+</head>
+<body data-pagina="historial">
+  <aside id="barra-lateral" class="barra-lateral"></aside>
+  <main class="contenido">
+    <div id="mensaje" class="mensaje" hidden></div>
+
+    <section id="vista-lista">
+      <h2 class="titulo">Historial de ventas</h2>
+      <p id="nota-cajero" class="nota" hidden>Solo se muestran tus ventas.</p>
+
+      <div class="filtros filtros-fecha">
+        <label>Desde <input type="date" id="desde"></label>
+        <label>Hasta <input type="date" id="hasta"></label>
+        <button id="btn-filtrar" class="btn btn-primario" type="button">Filtrar</button>
+        <button id="btn-limpiar" class="btn btn-secundario" type="button">Limpiar</button>
+      </div>
+
+      <div class="tabla-contenedor">
+        <table>
+          <thead>
+            <tr><th>Folio</th><th>Fecha</th><th>Cajero</th><th>Total</th><th></th></tr>
+          </thead>
+          <tbody id="tabla-ventas"></tbody>
+        </table>
+      </div>
+      <p id="nota-limite" class="nota" hidden>Se muestran las últimas 200 ventas. Usa las fechas para acotar la búsqueda.</p>
+    </section>
+
+    <section id="vista-ticket" hidden>
+      <div id="ticket-contenido"></div>
+      <div class="botones-ticket no-imprimir">
+        <button id="btn-imprimir" class="btn btn-secundario">Imprimir ticket</button>
+        <button id="btn-volver" class="btn btn-primario">Volver al historial</button>
+      </div>
+    </section>
+  </main>
+
+  <script src="js/comun.js"></script>
+  <script src="js/historial.js"></script>
+</body>
+</html>

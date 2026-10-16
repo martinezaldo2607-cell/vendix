@@ -31,7 +31,10 @@
         <p class="centrado-texto">Monto recibido</p>
         <p class="monto-grande" id="cobro-recibido"></p>
         <div class="teclado" id="teclado"></div>
-        <div class="centrado"><button id="btn-volver" class="btn btn-secundario">Volver a la venta</button></div>
+        <div class="botones-ticket">
+          <button id="btn-exacto" class="btn btn-secundario" type="button">Monto exacto</button>
+          <button id="btn-volver" class="btn btn-secundario" type="button">Volver a la venta (Esc)</button>
+        </div>
       </section>
 
       <section id="vista-ticket" hidden>
@@ -52,7 +55,7 @@
         <div class="total-fila"><span>Total</span><strong id="total-venta">$0.00</strong></div>
         <div id="fila-cambio" class="cambio" hidden><span>Cambio</span><strong id="cambio-venta"></strong></div>
         <button id="btn-cobrar" class="btn btn-primario btn-block" disabled>Cobrar</button>
-        <button id="btn-confirmar" class="btn btn-primario btn-block" hidden disabled>Confirmar cobro</button>
+        <button id="btn-confirmar" class="btn btn-primario btn-block" hidden disabled>Confirmar cobro (Enter)</button>
       </div>
     </aside>
   </div>

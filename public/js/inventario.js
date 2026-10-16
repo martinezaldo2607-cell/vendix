@@ -99,8 +99,12 @@ inputBuscar.addEventListener('input', () => {
 // El botón de entrada solo aparece para el administrador; el cajero ve una nota
 sesionLista.then(() => {
   if (!USUARIO) return;
-  if (USUARIO.rol === 'ADMINISTRADOR') btnEntrada.hidden = false;
-  else document.getElementById('nota-lectura').hidden = false;
+  if (USUARIO.rol === 'ADMINISTRADOR') {
+    btnEntrada.hidden = false;
+    if (new URLSearchParams(location.search).has('entrada')) abrirEntrada();
+  } else {
+    document.getElementById('nota-lectura').hidden = false;
+  }
 });
 
 cargar();
