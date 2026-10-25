@@ -82,4 +82,11 @@ async function restaurar(nombre) {
   }
 }
 
-module.exports = { listar, ruta, crear, restaurar };
+function eliminar(nombre) {
+  const completa = ruta(nombre);   // solo acepta nombres de respaldo válidos que existan
+  if (!completa) return false;
+  fs.unlinkSync(completa);
+  return true;
+}
+
+module.exports = { listar, ruta, crear, restaurar, eliminar };

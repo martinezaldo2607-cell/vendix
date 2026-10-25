@@ -8,6 +8,7 @@ router.use(requiereRol('ADMINISTRADOR'));
 router.get('/', ctrl.listar);
 router.post('/', ctrl.crear);
 router.get('/:nombre', ctrl.descargar);
+router.delete('/:nombre', ctrl.eliminar);
 router.post('/:nombre/restaurar', ctrl.restaurar);
 
 module.exports = router;

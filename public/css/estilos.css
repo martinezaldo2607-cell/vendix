@@ -341,3 +341,11 @@ td:first-child { white-space: normal; overflow-wrap: anywhere; max-width: 320px;
 @media (max-width: 800px) {
   .paneles-ajustes { grid-template-columns: 1fr; }
 }
+
+.panel-riesgo { grid-column: 1 / -1; border-color: #e5b3ae; }
+.opciones-riesgo { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+@media (max-width: 800px) { .opciones-riesgo { grid-template-columns: 1fr; } }
+
+.fila-respaldo { flex-wrap: wrap; }
+.datos-respaldo { flex: 1 1 200px; min-width: 0; }
+.fila-respaldo .acciones { flex-wrap: wrap; }

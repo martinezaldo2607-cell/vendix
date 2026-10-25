@@ -30,4 +30,16 @@ async function restaurar(req, res) {
   }
 }
 
-module.exports = { listar, crear, descargar, restaurar };
+function eliminar(req, res) {
+  try {
+    if (!Respaldo.eliminar(req.params.nombre)) {
+      return res.status(404).json({ error: 'Respaldo no encontrado' });
+    }
+    res.json({ mensaje: 'Respaldo eliminado' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'No se pudo eliminar el respaldo' });
+  }
+}
+
+module.exports = { listar, crear, descargar, restaurar, eliminar };

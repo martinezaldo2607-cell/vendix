@@ -63,7 +63,8 @@ db.transaction(() => {
     insUsuario.run(nombre, usuario, bcrypt.hashSync(clave, 10), rol));
   const adminId = db.prepare("SELECT id FROM usuarios WHERE usuario = 'ricardo'").get().id;
 
-  productos.forEach(([nombre, cat, imp, precio, litros, stock, minimo]) => {
+  const sinProductos = process.argv.includes('--vacio');
+  if (!sinProductos) productos.forEach(([nombre, cat, imp, precio, litros, stock, minimo]) => {
     if (existe.get(nombre)) return;
     Producto.crear({
       nombre,

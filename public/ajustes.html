@@ -43,7 +43,23 @@
 
         <h4 class="sub-titulo">Respaldos guardados</h4>
         <div id="lista-respaldos"></div>
-        <p class="nota-izq">Se guardan en la carpeta «respaldos» del programa. Descarga uno y guárdalo en una memoria USB o en la nube: si el equipo falla, un respaldo que está en el mismo equipo se pierde con él.</p>
+        <p class="nota-izq">Se guardan en la carpeta «respaldos» del programa; se conservan los 30 más recientes. Descarga uno y guárdalo en una memoria USB o en la nube: si el equipo falla, un respaldo que está en el mismo equipo se pierde con él. Puedes eliminar los que ya no necesites.</p>
+      </section>
+      <section class="panel panel-riesgo">
+        <h3>Empezar con tu propio inventario</h3>
+        <p class="sub">Para quitar los productos de ejemplo o reiniciar la tienda. Antes de borrar se guarda un respaldo automático, así que se puede deshacer restaurándolo.</p>
+        <div class="opciones-riesgo">
+          <div>
+            <strong>Vaciar el catálogo</strong>
+            <p class="nota-izq">Quita todos los productos del catálogo y del inventario. Las ventas anteriores se conservan en el historial y los reportes.</p>
+            <button id="btn-vaciar-catalogo" class="btn btn-peligro" type="button">Vaciar catálogo…</button>
+          </div>
+          <div>
+            <strong>Empezar de cero</strong>
+            <p class="nota-izq">Borra productos, ventas, historial y movimientos de inventario. Se conservan usuarios, categorías, impuestos y ajustes.</p>
+            <button id="btn-reiniciar" class="btn btn-peligro" type="button">Empezar de cero…</button>
+          </div>
+        </div>
       </section>
     </div>
   </main>
@@ -54,6 +70,31 @@
     <div class="botones">
       <button id="restaurar-cancelar" class="btn btn-secundario" type="button" autofocus>Cancelar</button>
       <button id="restaurar-confirmar" class="btn btn-peligro" type="button">Restaurar</button>
+    </div>
+  </dialog>
+  <dialog id="dialogo-borrar">
+    <form id="form-borrar">
+      <h3 id="borrar-titulo"></h3>
+      <p id="borrar-texto"></p>
+      <label>Escribe <strong>BORRAR</strong> para confirmar
+        <input type="text" name="confirmacion" autocomplete="off" required>
+      </label>
+      <label>Tu contraseña
+        <input type="password" name="password" autocomplete="current-password" required>
+      </label>
+      <p id="error-borrar" class="error" hidden></p>
+      <div class="botones">
+        <button type="button" id="borrar-cancelar" class="btn btn-secundario">Cancelar</button>
+        <button type="submit" class="btn btn-peligro">Borrar definitivamente</button>
+      </div>
+    </form>
+  </dialog>
+  <dialog id="dialogo-eliminar-respaldo">
+    <h3>¿Eliminar este respaldo?</h3>
+    <p id="texto-eliminar-respaldo"></p>
+    <div class="botones">
+      <button id="eliminar-respaldo-cancelar" class="btn btn-secundario" type="button" autofocus>Cancelar</button>
+      <button id="eliminar-respaldo-confirmar" class="btn btn-peligro" type="button">Eliminar</button>
     </div>
   </dialog>
 
