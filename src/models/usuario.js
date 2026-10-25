@@ -37,4 +37,8 @@ function eliminar(id) {
   `).run(id);
 }
 
-module.exports = { buscarPorUsuario, listar, obtener, crear, actualizar, eliminar };
+function buscarPorId(id) {
+  return db.prepare('SELECT * FROM usuarios WHERE id = ?').get(id);
+}
+
+module.exports = { buscarPorUsuario, buscarPorId, listar, obtener, crear, actualizar, eliminar };
