@@ -86,6 +86,15 @@ function enfocarBuscador() {
   if (window.matchMedia('(pointer: fine)').matches) el('buscar').focus();
 }
 
+// Pasa a la categoría siguiente (+1) o anterior (-1), dando la vuelta al llegar al final
+function cambiarCategoria(paso) {
+  const ids = [0, MAS_VENDIDOS, ...categorias.map((c) => c.id)];
+  const actual = Math.max(0, ids.indexOf(categoriaActiva));
+  categoriaActiva = ids[(actual + paso + ids.length) % ids.length];
+  pintarChips();
+  pintarTarjetas();
+}
+
 async function recargarCatalogo(silencioso = false) {
   // Nunca se toca la venta mientras se está cobrando
   if (silencioso && (vistaActual !== 'catalogo' || cobrando)) return;
@@ -279,6 +288,18 @@ document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape' && vistaActual === 'cobro') {
     mostrarVista('catalogo');
     return;
+  }
+
+    // Flechas ← →: cambian de categoría (con el buscador vacío, para no quitarle las flechas al texto)
+  if ((e.key === 'ArrowLeft' || e.key === 'ArrowRight') && vistaActual === 'catalogo'
+      && !e.ctrlKey && !e.metaKey && !e.altKey && !e.shiftKey
+      && !document.querySelector('dialog[open]')) {
+    const campo = e.target.closest('input, select, textarea');
+    if (!campo || (campo.id === 'buscar' && !campo.value)) {
+      e.preventDefault();
+      cambiarCategoria(e.key === 'ArrowRight' ? 1 : -1);
+      return;
+    }
   }
 
   // No se interfiere con campos de texto, enlaces, listas, ventanas ni botones con su propio Enter

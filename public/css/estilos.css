@@ -356,3 +356,6 @@ td:first-child { white-space: normal; overflow-wrap: anywhere; max-width: 320px;
 .producto .precio { font-size: 1.15rem; font-weight: 700; color: var(--texto); }
 .producto.en-venta { border-color: var(--petroleo); box-shadow: 0 0 0 2px var(--petroleo); }
 .producto .contador { position: absolute; top: 6px; right: 6px; min-width: 28px; padding: 0.1rem 0.45rem; border-radius: 999px; background: var(--petroleo); color: #fff; font-size: 0.8rem; font-weight: 700; text-align: center; }
+
+.ayuda-teclado { margin: -0.5rem 0 1rem; text-align: center; font-size: 0.8rem; color: #5a7384; }
+@media (pointer: coarse) { .ayuda-teclado { display: none; } }
