@@ -349,3 +349,10 @@ td:first-child { white-space: normal; overflow-wrap: anywhere; max-width: 320px;
 .fila-respaldo { flex-wrap: wrap; }
 .datos-respaldo { flex: 1 1 200px; min-width: 0; }
 .fila-respaldo .acciones { flex-wrap: wrap; }
+
+/* Tarjetas de la caja: color por categoría, precio destacado y contador */
+.producto { position: relative; }
+.producto .imagen { height: 46px; font-size: 1.3rem; background: hsl(var(--tono, 200), 45%, 88%); color: hsl(var(--tono, 200), 40%, 28%); }
+.producto .precio { font-size: 1.15rem; font-weight: 700; color: var(--texto); }
+.producto.en-venta { border-color: var(--petroleo); box-shadow: 0 0 0 2px var(--petroleo); }
+.producto .contador { position: absolute; top: 6px; right: 6px; min-width: 28px; padding: 0.1rem 0.45rem; border-radius: 999px; background: var(--petroleo); color: #fff; font-size: 0.8rem; font-weight: 700; text-align: center; }

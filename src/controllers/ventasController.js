@@ -70,4 +70,8 @@ function listar(req, res) {
   res.json(Venta.listar({ desde, hasta, usuarioId: u.rol === 'CAJERO' ? u.id : null }));
 }
 
-module.exports = { calcular, crear, obtener, listar };
+function populares(req, res) {
+  res.json(Venta.populares(30));
+}
+
+module.exports = { calcular, crear, obtener, listar, populares };
