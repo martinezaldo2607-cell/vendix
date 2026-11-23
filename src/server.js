@@ -39,6 +39,6 @@ app.use('/api/usuarios', require('./routes/usuarios'));
 app.use('/api/respaldos', require('./routes/respaldos'));
 app.use('/api/mantenimiento', require('./routes/mantenimiento'));
 
-app.listen(PORT, () => {
+app.listen(PORT, '0.0.0.0', () => {
   console.log(`Vendix corriendo en http://localhost:${PORT}`);
 });
