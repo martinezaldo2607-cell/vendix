@@ -10,6 +10,8 @@ let vistaActual = 'catalogo';
 let turno = 0;
 let cobrando = false;
 let firmaCatalogo = null;
+let vendidos = new Map();   // producto_id -> unidades vendidas recientemente
+const MAS_VENDIDOS = -1;    // identificador del botón «Más vendidos»
 
 // ---------- Vistas ----------
 function mostrarVista(nombre) {
@@ -21,18 +23,31 @@ function mostrarVista(nombre) {
   el('fila-cambio').hidden = nombre !== 'cobro';
   el('btn-vaciar').hidden = nombre !== 'catalogo';
   actualizarBotones();
+  if (nombre === 'catalogo') enfocarBuscador();
 }
 
 // ---------- Catálogo ----------
+// Agotados al final, luego los más vendidos, luego por nombre
+function ordenar(lista) {
+  return [...lista].sort((a, b) =>
+    (a.stock === 0) - (b.stock === 0) ||
+    (vendidos.get(b.id) || 0) - (vendidos.get(a.id) || 0) ||
+    a.nombre.localeCompare(b.nombre, 'es'));
+}
+
 function filtrados() {
   const texto = el('buscar').value.trim().toLowerCase();
-  return productos.filter((p) =>
-    (categoriaActiva === 0 || p.categoria_id === categoriaActiva) &&
-    (!texto || p.nombre.toLowerCase().includes(texto)));
+  let lista = ordenar(productos.filter((p) =>
+    (categoriaActiva <= 0 || p.categoria_id === categoriaActiva) &&
+    (!texto || p.nombre.toLowerCase().includes(texto))));
+  if (categoriaActiva === MAS_VENDIDOS && !texto) {
+    lista = lista.filter((p) => (vendidos.get(p.id) || 0) > 0).slice(0, 12);
+  }
+  return lista;
 }
 
 function pintarChips() {
-  const lista = [{ id: 0, nombre: 'Todos' }, ...categorias];
+  const lista = [{ id: 0, nombre: 'Todos' }, { id: MAS_VENDIDOS, nombre: '★ Más vendidos' }, ...categorias];
   el('chips').innerHTML = lista.map((c) =>
     `<button class="chip ${c.id === categoriaActiva ? 'activo' : ''}" data-cat="${c.id}">${esc(c.nombre)}</button>`).join('');
 }
@@ -40,16 +55,20 @@ function pintarChips() {
 function pintarTarjetas() {
   const lista = filtrados();
   if (lista.length === 0) {
-    el('tarjetas').innerHTML = '<p class="vacio">No hay productos que mostrar.</p>';
+    el('tarjetas').innerHTML = `<p class="vacio">${categoriaActiva === MAS_VENDIDOS
+      ? 'Todavía no hay ventas recientes para mostrar.' : 'No hay productos que mostrar.'}</p>`;
     return;
   }
   el('tarjetas').innerHTML = lista.map((p) => {
     const agotado = p.stock === 0;
+    const enVenta = carrito.get(p.id) || 0;
     const aviso = agotado
       ? '<span class="estado estado-agotado">Agotado</span>'
       : `<span class="estado ${p.stock_bajo ? 'estado-bajo' : 'estado-neutro'}">Quedan ${p.stock}</span>`;
     return `
-      <button class="producto ${agotado ? 'agotado' : ''}" data-id="${p.id}" title="${esc(p.nombre)}" ${agotado ? 'disabled' : ''}>
+      <button class="producto ${agotado ? 'agotado' : ''} ${enVenta ? 'en-venta' : ''}" data-id="${p.id}"
+              style="--tono:${(p.categoria_id * 47) % 360}" title="${esc(p.nombre)}" ${agotado ? 'disabled' : ''}>
+        ${enVenta ? `<span class="contador">×${enVenta}</span>` : ''}
         <div class="imagen">${esc(p.nombre.charAt(0).toUpperCase())}</div>
         <div class="info">
           <span class="nombre">${esc(p.nombre)}</span>
@@ -62,11 +81,18 @@ function pintarTarjetas() {
   }).join('');
 }
 
+// En computadora el cursor va al buscador; en pantallas táctiles no, para no abrir el teclado
+function enfocarBuscador() {
+  if (window.matchMedia('(pointer: fine)').matches) el('buscar').focus();
+}
+
 async function recargarCatalogo(silencioso = false) {
   // Nunca se toca la venta mientras se está cobrando
   if (silencioso && (vistaActual !== 'catalogo' || cobrando)) return;
 
-  const [prod, cats] = await Promise.all([api('/api/productos'), api('/api/categorias')]);
+  const [prod, cats, pop] = await Promise.all([
+    api('/api/productos'), api('/api/categorias'), api('/api/ventas/populares'),
+  ]);
   const firma = JSON.stringify([prod, cats]);
   const cambio = firmaCatalogo !== null && firma !== firmaCatalogo;
   firmaCatalogo = firma;
@@ -74,6 +100,7 @@ async function recargarCatalogo(silencioso = false) {
 
   productos = prod;
   categorias = cats;
+  vendidos = new Map(pop.map((x) => [x.producto_id, x.unidades]));
 
   // Si cambió la disponibilidad, se ajusta lo que ya estaba en la venta
   let ajustada = false;
@@ -148,6 +175,7 @@ function pintarVenta() {
     }).join('');
     el('total-venta').textContent = moneda.format(calculo.total);
   }
+  pintarTarjetas();
   actualizarBotones();
 }
 
@@ -218,6 +246,27 @@ async function irACobrar() {
 }
 
 // ---------- Eventos ----------
+// Enter en el buscador: con texto agrega el primer producto disponible; vacío, abre el cobro
+el('buscar').addEventListener('keydown', (e) => {
+  if (e.key !== 'Enter') return;
+  e.preventDefault();
+  if (e.repeat) return;
+
+  const texto = e.currentTarget.value.trim();
+  if (!texto) {
+    if (carrito.size > 0) irACobrar();
+    return;
+  }
+  const primero = filtrados().find((p) => p.stock > 0);
+  if (!primero) {
+    mostrarMensaje('No hay productos disponibles con ese nombre', 'error');
+    return;
+  }
+  cambiar(primero.id, 1);
+  e.currentTarget.value = '';
+  pintarTarjetas();
+});
+
 el('teclado').innerHTML = ['1', '2', '3', '4', '5', '6', '7', '8', '9', 'C', '0', '.']
   .map((t) => `<button class="tecla" data-tecla="${t}">${t}</button>`).join('');
 
@@ -227,21 +276,24 @@ el('teclado').addEventListener('click', (e) => {
 });
 
 document.addEventListener('keydown', (e) => {
-  // Esc: del cobro regresa a la venta, sin perder lo capturado
   if (e.key === 'Escape' && vistaActual === 'cobro') {
     mostrarVista('catalogo');
     return;
   }
 
-  // No se interfiere con campos de texto, enlaces, listas, ventanas emergentes
-  // ni con botones que ya tienen su propio Enter (volver y actualizar)
+  // No se interfiere con campos de texto, enlaces, listas, ventanas ni botones con su propio Enter
   if (e.target.closest('a, input, select, textarea, dialog, #btn-volver, #btn-actualizar, #btn-exacto')) return;
+
+  // En el catálogo, escribir una letra lleva el cursor al buscador
+  if (vistaActual === 'catalogo' && e.key.length === 1 && e.key !== ' ' && !e.ctrlKey && !e.metaKey && !e.altKey) {
+    el('buscar').focus();
+    return;
+  }
 
   // Enter: en el catálogo abre el cobro, y en el cobro confirma
   if (e.key === 'Enter' && (vistaActual === 'catalogo' || vistaActual === 'cobro')) {
-    e.preventDefault();      // evita que Enter pulse el botón que tenga el foco
-    if (e.repeat) return;    // mantener Enter presionado no repite la acción
-
+    e.preventDefault();
+    if (e.repeat) return;
     if (vistaActual === 'catalogo' && carrito.size > 0) irACobrar();
     else if (vistaActual === 'cobro' && !el('btn-confirmar').disabled) confirmar();
     return;

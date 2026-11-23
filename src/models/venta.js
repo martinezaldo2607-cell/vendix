@@ -107,4 +107,15 @@ function listar({ desde, hasta, usuarioId } = {}) {
   return db.prepare(sql).all(...params);
 }
 
-module.exports = { ErrorNegocio, armarLineas, crear, obtener, listar };
+// Unidades vendidas por producto en los últimos 30 días
+function populares(dias = 30) {
+  return db.prepare(`
+    SELECT d.producto_id, SUM(d.cantidad) AS unidades
+    FROM detalle_venta d
+    JOIN ventas v ON v.id = d.venta_id
+    WHERE date(v.fecha_hora) >= date('now', 'localtime', ?)
+    GROUP BY d.producto_id
+  `).all(`-${dias} days`);
+}
+
+module.exports = { ErrorNegocio, armarLineas, crear, obtener, listar, populares };
